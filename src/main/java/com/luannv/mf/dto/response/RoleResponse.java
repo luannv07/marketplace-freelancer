@@ -1,25 +1,19 @@
-package com.luannv.mf.models;
+package com.luannv.mf.dto.response;
 
-import jakarta.persistence.*;
+import com.luannv.mf.models.Permission;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
-@Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "roles")
-public class Role {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Integer id;
+public class RoleResponse {
 	String name;
 	String description;
-	@ManyToMany
 	Set<Permission> permissions;
 }

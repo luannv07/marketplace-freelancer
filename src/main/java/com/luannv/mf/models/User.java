@@ -1,5 +1,6 @@
 package com.luannv.mf.models;
 
+import com.luannv.mf.dto.response.RoleResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "users")
 
 public class User {
 	@Id
@@ -25,7 +27,8 @@ public class User {
 	String password;
 	LocalDate createAt;
 	LocalDate updateAt;
-	Integer rate;
+	String address;
+	Double ratePoint;
 	@ManyToMany
 	Set<Role> roles;
 }
