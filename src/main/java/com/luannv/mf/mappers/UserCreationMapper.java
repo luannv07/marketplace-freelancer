@@ -30,9 +30,8 @@ public class UserCreationMapper implements GenericMapper<User, UserCreationReque
 	RoleMapper roleMapper;
 	@Override
 	public User toEntity(UserCreationRequest userCreationRequest) {
-		boolean isValidEnum = ItemUtils.isItemOfEnum(userCreationRequest.getUserType(), RoleEnum.class);
-		if (!isValidEnum)
-			throw new SingleErrorException(ErrorCode.ROLE_INVALID);
+		Role role = roleRepository.findByName(userCreationRequest.getUserType())
+						.orElseThrow(() -> new SingleErrorException(ErrorCode.ROLE_NOTFOUND));
 		return User.builder()
 						.username(userCreationRequest.getUsername())
 						.email(userCreationRequest.getEmail())
@@ -41,7 +40,7 @@ public class UserCreationMapper implements GenericMapper<User, UserCreationReque
 						.ratePoint(Double.valueOf(-1))
 						.createAt(LocalDate.now())
 						.updateAt(LocalDate.now())
-						.roles(Set.of(roleRepository.findByName(userCreationRequest.getUserType()).get()))
+						.roles(Set.of(role))
 						.build();
 	}
 
