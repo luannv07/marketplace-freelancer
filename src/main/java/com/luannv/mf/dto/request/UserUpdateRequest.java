@@ -13,9 +13,10 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 // 0 admin, 1 client, 2 freelancer
 public class UserUpdateRequest {
+	String oldPassword;
 	String password;
 	String confirmPassword;
 	String address;
-	String userType;
+//	String userType;
 	Set<String> roles;
 }

@@ -4,14 +4,18 @@ import com.luannv.mf.dto.request.UserCreationRequest;
 import com.luannv.mf.dto.response.RoleResponse;
 import com.luannv.mf.dto.response.UserResponse;
 import com.luannv.mf.enums.RoleEnum;
+import com.luannv.mf.exceptions.ErrorCode;
+import com.luannv.mf.exceptions.SingleErrorException;
 import com.luannv.mf.models.Role;
 import com.luannv.mf.models.User;
 import com.luannv.mf.repositories.RoleRepository;
+import com.luannv.mf.utils.ItemUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -26,6 +30,9 @@ public class UserCreationMapper implements GenericMapper<User, UserCreationReque
 	RoleMapper roleMapper;
 	@Override
 	public User toEntity(UserCreationRequest userCreationRequest) {
+		boolean isValidEnum = ItemUtils.isItemOfEnum(userCreationRequest.getUserType(), RoleEnum.class);
+		if (!isValidEnum)
+			throw new SingleErrorException(ErrorCode.ROLE_INVALID);
 		return User.builder()
 						.username(userCreationRequest.getUsername())
 						.email(userCreationRequest.getEmail())
@@ -34,13 +41,12 @@ public class UserCreationMapper implements GenericMapper<User, UserCreationReque
 						.ratePoint(Double.valueOf(-1))
 						.createAt(LocalDate.now())
 						.updateAt(LocalDate.now())
-						.roles(Set.of(roleRepository.findByName(RoleEnum.CLIENT.name()).get()))
+						.roles(Set.of(roleRepository.findByName(userCreationRequest.getUserType()).get()))
 						.build();
 	}
 
 	@Override
 	public UserResponse toResponse(User user) {
-//		Set<Role> set = user.getRoles();
 		Set<RoleResponse> set = user.getRoles()
 						.stream()
 						.map(role -> roleMapper.toResponse(role))
