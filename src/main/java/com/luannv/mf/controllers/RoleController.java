@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class RoleController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse> getAllRoles() {
+		System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
 		return ResponseEntity.ok().body(ApiResponse.<Void, List<RoleResponse>>builder()
 						.result(roleService.getAll())
 						.timestamp(System.currentTimeMillis())

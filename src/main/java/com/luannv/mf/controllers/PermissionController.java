@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import org.apache.coyote.Response;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class PermissionController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse> getAllPermissions() {
+		System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
 		return ResponseEntity.ok().body(ApiResponse.<Void, List<PermissionResponse>>builder()
 						.timestamp(System.currentTimeMillis())
 						.result(permissionService.getAll())
