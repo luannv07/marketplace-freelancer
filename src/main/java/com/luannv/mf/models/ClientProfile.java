@@ -3,7 +3,6 @@ package com.luannv.mf.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.TypeAlias;
 
 import java.util.Set;
 
@@ -14,14 +13,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "freelancer_profile")
-public class FreelancerProfile {
+@Table(name = "client_profile")
+
+public class ClientProfile {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer id;
-	String name;
-	@ManyToMany
-	Set<Skill> skills;
+	String companyName;
 	@OneToOne(cascade = CascadeType.ALL)
-	User userFreelancerProfile;
+	User userClientProfile;
 }

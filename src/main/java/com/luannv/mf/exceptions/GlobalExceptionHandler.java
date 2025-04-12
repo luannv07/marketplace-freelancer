@@ -3,15 +3,25 @@ package com.luannv.mf.exceptions;
 import com.fasterxml.jackson.databind.util.EnumValues;
 import com.luannv.mf.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.yaml.snakeyaml.util.EnumUtils;
 
+import java.text.ParseException;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ApiResponse> uncategoriedException(RuntimeException runtimeException) {
+		return ResponseEntity.badRequest().body(ApiResponse.<String, Void>builder()
+						.message(ErrorCode.UNCATEGORIED_ERROR.getMessages())
+						.timestamp(System.currentTimeMillis())
+						.build());
+	}
+
 	@ExceptionHandler(SingleErrorException.class)
 	public ResponseEntity<ApiResponse> handleSingleException(SingleErrorException singleErrorException) {
 		ErrorCode errorCode = singleErrorException.getErrorCode();
@@ -21,7 +31,7 @@ public class GlobalExceptionHandler {
 						.build());
 	}
 
-	@ExceptionHandler
+	@ExceptionHandler(MultipleErrorsException.class)
 	public ResponseEntity<ApiResponse> handleMultipleExceptions(MultipleErrorsException multipleErrorsException) {
 		Map<String, String> errors = multipleErrorsException.getErrorCodes();
 		return ResponseEntity.badRequest().body(ApiResponse.<Map<String, String>, Void>builder()
@@ -41,6 +51,20 @@ public class GlobalExceptionHandler {
 		}
 		return ResponseEntity.badRequest().body(ApiResponse.<String, Void>builder()
 						.message(errorCode.getMessages())
+						.timestamp(System.currentTimeMillis())
+						.build());
+	}
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ApiResponse> httpMessageNotReadableExceptionException(HttpMessageNotReadableException exception) {
+		return ResponseEntity.badRequest().body(ApiResponse.<String, Void>builder()
+						.message(ErrorCode.BODY_REQUIRED.getMessages())
+						.timestamp(System.currentTimeMillis())
+						.build());
+	}
+	@ExceptionHandler(ParseException.class)
+	public ResponseEntity<ApiResponse> parseException(ParseException exception) {
+		return ResponseEntity.badRequest().body(ApiResponse.<String, Void>builder()
+						.message(ErrorCode.INVALID_TOKEN.getMessages())
 						.timestamp(System.currentTimeMillis())
 						.build());
 	}

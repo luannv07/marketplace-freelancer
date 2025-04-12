@@ -46,11 +46,11 @@ public class UserController {
 		if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword()))
 			throw new SingleErrorException(ErrorCode.PASSWORD_NOTVALID);
 		String token="";
-		try {
-			token = new JwtUtils(permissionRepository).generateToken(user, "dITUgWzVXsZguJ3c/+tVFF2thcHHP/LIpaefcp3HhcbllObpJBXppBLLImVUgqOd");
-		} catch (JOSEException e) {
-			throw new RuntimeException(e);
-		}
+//		try {
+//			token = new JwtUtils(permissionRepository).generateToken(user, "dITUgWzVXsZguJ3c/+tVFF2thcHHP/LIpaefcp3HhcbllObpJBXppBLLImVUgqOd");
+//		} catch (JOSEException e) {
+//			throw new RuntimeException(e);
+//		}
 		return ResponseEntity.ok().body(ApiResponse.<Void, String>builder()
 										.timestamp(System.currentTimeMillis())
 										.result(token)
@@ -73,14 +73,6 @@ public class UserController {
 						.build());
 	}
 
-	@PostMapping
-	public ResponseEntity<ApiResponse> createUser(@Valid @RequestBody UserCreationRequest userCreationRequest,
-																								BindingResult bindingResult) {
-		return ResponseEntity.ok().body(ApiResponse.<Void, UserResponse>builder()
-						.timestamp(System.currentTimeMillis())
-						.result(userService.addUser(userCreationRequest, bindingResult))
-						.build());
-	}
 	@PutMapping("/{username}")
 	public ResponseEntity<ApiResponse> editUser(@PathVariable String username,
 																							@Valid @RequestBody UserUpdateRequest userUpdateRequest,

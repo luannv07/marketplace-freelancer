@@ -3,8 +3,8 @@ package com.luannv.mf.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.TypeAlias;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -14,14 +14,21 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "freelancer_profile")
-public class FreelancerProfile {
+@Table(name = "projects")
+
+public class Project {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Integer id;
-	String name;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	String id;
+	String title;
+	String description;
+	Long budgetMin;
+	Long budgetMax;
+	LocalDate deadline;
+	LocalDate createAt;
+	Boolean isClaimed;
 	@ManyToMany
 	Set<Skill> skills;
-	@OneToOne(cascade = CascadeType.ALL)
-	User userFreelancerProfile;
+	@OneToOne
+	User user;
 }

@@ -23,7 +23,12 @@ public enum ErrorCode {
 	CONFIRM_PASSWORDINVALID(1012, "Confirm password does not match the password.", HttpStatus.BAD_REQUEST),
 	PASSWORD_NOTVALID(1013, "Password is not valid.", HttpStatus.BAD_REQUEST),
 	EMAIL_NOTVALID(1015, "Email is not valid.", HttpStatus.BAD_REQUEST),
-	USERTYPE_NOTVALID(1017, "You only chooses Freelancer or Client", HttpStatus.BAD_REQUEST);
+	USERTYPE_NOTVALID(1017, "You only chooses Freelancer or Client", HttpStatus.BAD_REQUEST),
+	LOGIN_FAILED(1018, "Username or password is not valid.", HttpStatus.BAD_REQUEST),
+	BODY_REQUIRED(1019, "Form not null", HttpStatus.BAD_REQUEST),
+	INVALID_TOKEN(1020, "Invalid token.", HttpStatus.BAD_REQUEST),
+
+	UNAUTHENTICATED(1021, "Please login to access this resource.", HttpStatus.BAD_REQUEST);
 	Integer code;
 	String messages;
 	HttpStatus httpStatus;

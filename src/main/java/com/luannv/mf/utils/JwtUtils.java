@@ -18,14 +18,27 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class JwtUtils {
-	PermissionRepository permissionRepository;
 
-	public String generateToken(User user, String jwtSecretKey) throws JOSEException {
+	public static Boolean isValidToken(String token, String secretKey) throws JOSEException, ParseException {
+		SignedJWT signedJWT = SignedJWT.parse(token);
+		JWSVerifier jwsVerifier = new MACVerifier(secretKey);
+		return signedJWT.verify(jwsVerifier) && new Date().before(signedJWT.getJWTClaimsSet().getExpirationTime());
+	}
+	public static String convertRole(Set<Role> roles) {
+		StringJoiner str = new StringJoiner(" ");
+		Set<String> set = new HashSet<>();
+
+		roles.forEach(role -> {
+			set.add(role.getName());
+			role.getPermissions().forEach(permission -> {
+				set.add(permission.getName());
+			});
+		});
+		set.forEach(item -> str.add(item));
+		return str.toString();
+	}
+	public static String generateToken(User user, String jwtSecretKey) throws JOSEException {
 		JWSSigner jwsSigner = new MACSigner(jwtSecretKey);
 		JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 		JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -34,27 +47,8 @@ public class JwtUtils {
 						.expirationTime(new Date(Instant.now().plus(2, ChronoUnit.HOURS).toEpochMilli()))
 						.claim("scope", convertRole(user.getRoles()))
 						.build();
-		SignedJWT signedJWT =  new SignedJWT(jwsHeader, jwtClaimsSet);
+		SignedJWT signedJWT = new SignedJWT(jwsHeader, jwtClaimsSet);
 		signedJWT.sign(jwsSigner);
 		return signedJWT.serialize();
-	}
-	public Boolean isValidToken(String token, String secretKey) throws JOSEException, ParseException {
-		SignedJWT signedJWT = SignedJWT.parse(token);
-		JWSVerifier jwsVerifier = new MACVerifier(secretKey);
-		return signedJWT.verify(jwsVerifier) && new Date().before(signedJWT.getJWTClaimsSet().getExpirationTime());
-	}
-	public String convertRole(Set<Role> roles) {
-		StringJoiner str = new StringJoiner(" ");
-		Set<String> set = new HashSet<>();
-
-		roles.forEach(role -> {
-//			String formatRole = "ROLE_" + role.getName();
-			set.add(role.getName());
-			role.getPermissions().forEach(permission -> {
-				set.add(permission.getName());
-			});
-		});
-		set.forEach(item -> str.add(item));
-		return str.toString();
 	}
 }

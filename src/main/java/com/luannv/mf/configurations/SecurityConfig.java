@@ -1,29 +1,22 @@
 package com.luannv.mf.configurations;
 
 import com.luannv.mf.enums.RoleEnum;
+import com.luannv.mf.services.InvalidatedTokenService;
 import com.luannv.mf.utils.ItemUtils;
-import com.nimbusds.jose.Algorithm;
-import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthoritiesContainer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.Sha512DigestUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.print.attribute.standard.JobKOctets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,12 +24,11 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 	@Value("${jwt.jwtSecretKey}")
 	private String secretKey;
-
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, InvalidatedTokenService invalidatedTokenService) throws Exception {
 		http.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/roles/**").hasAuthority("VIEW_PROFILE")
-						.requestMatchers("api/permissions/**").hasRole("ADMIN")
+//						.requestMatchers("/api/roles/**").hasAuthority("VIEW_PROFILE")
+//						.requestMatchers("api/permissions/**").hasRole("ADMIN")
 						.anyRequest().permitAll());
 		http.csrf(c -> c.disable());
 		http.oauth2ResourceServer(oauth -> oauth
@@ -64,13 +56,15 @@ public class SecurityConfig {
 	@Bean
 	public JwtDecoder jwtDecoder() {
 		SecretKeySpec spec = new SecretKeySpec(secretKey.getBytes(), MacAlgorithm.HS512.getName());
-		return NimbusJwtDecoder.withSecretKey(spec)
+		NimbusJwtDecoder nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(spec)
 						.macAlgorithm(MacAlgorithm.HS512)
 						.build();
+		return nimbusJwtDecoder;
 	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 }
