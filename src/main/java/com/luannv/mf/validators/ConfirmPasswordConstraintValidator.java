@@ -5,16 +5,14 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.BeanUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ConfirmPasswordConstraintValidator implements ConstraintValidator<ConfirmPasswordConstraint, Object> {
 	String firstField;
 	String secondField;
+
 	@Override
 	public void initialize(ConfirmPasswordConstraint constraintAnnotation) {
 		firstField = constraintAnnotation.first();
@@ -33,7 +31,7 @@ public class ConfirmPasswordConstraintValidator implements ConstraintValidator<C
 			Object first = fF.get(value);
 			Object second = sF.get(value);
 
-			if (first == null || second == null || !first.equals(second)) {
+			if (first == null || !first.equals(second)) {
 				context.disableDefaultConstraintViolation();
 				context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
 								.addPropertyNode(secondField)

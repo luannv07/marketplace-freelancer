@@ -1,6 +1,5 @@
 package com.luannv.mf.dto.request;
 
-import com.luannv.mf.validators.constraints.ConfirmPasswordConstraint;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

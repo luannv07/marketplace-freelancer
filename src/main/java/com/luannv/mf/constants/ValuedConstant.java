@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValuedConstant {
 	@Value("${jwt.jwtSecretKey}")
-	public String jwtSecretKey;
+	public String JWT_SECRET_KEY;
 }

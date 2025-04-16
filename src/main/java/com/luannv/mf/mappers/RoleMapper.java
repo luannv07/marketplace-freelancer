@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,6 +45,7 @@ public class RoleMapper implements GenericMapper<Role, RoleRequest, RoleResponse
 						.permissions(permission.getPermissions())
 						.build();
 	}
+
 	public void updateEntity(Role exists, RoleRequest roleRequest) {
 		exists.setName(roleRequest.getName());
 		exists.setDescription(roleRequest.getDescription());

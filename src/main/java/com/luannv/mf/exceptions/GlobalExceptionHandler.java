@@ -1,13 +1,11 @@
 package com.luannv.mf.exceptions;
 
-import com.fasterxml.jackson.databind.util.EnumValues;
 import com.luannv.mf.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.text.ParseException;
 import java.util.Map;
@@ -54,6 +52,7 @@ public class GlobalExceptionHandler {
 						.timestamp(System.currentTimeMillis())
 						.build());
 	}
+
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ApiResponse> httpMessageNotReadableExceptionException(HttpMessageNotReadableException exception) {
 		return ResponseEntity.badRequest().body(ApiResponse.<String, Void>builder()
@@ -61,6 +60,7 @@ public class GlobalExceptionHandler {
 						.timestamp(System.currentTimeMillis())
 						.build());
 	}
+
 	@ExceptionHandler(ParseException.class)
 	public ResponseEntity<ApiResponse> parseException(ParseException exception) {
 		return ResponseEntity.badRequest().body(ApiResponse.<String, Void>builder()

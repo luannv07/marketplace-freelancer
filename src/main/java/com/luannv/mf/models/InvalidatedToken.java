@@ -1,11 +1,14 @@
 package com.luannv.mf.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -18,5 +21,5 @@ import java.time.LocalDate;
 public class InvalidatedToken {
 	@Id
 	String id; // jwtID
-	Instant expiryTime;
+	Date expiryTime;
 }

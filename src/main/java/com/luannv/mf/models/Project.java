@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -24,8 +25,8 @@ public class Project {
 	String description;
 	Long budgetMin;
 	Long budgetMax;
-	LocalDate deadline;
-	LocalDate createAt;
+	LocalDateTime deadline;
+	LocalDateTime createAt;
 	Boolean isClaimed;
 	@ManyToMany
 	Set<Skill> skills;

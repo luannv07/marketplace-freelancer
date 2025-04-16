@@ -3,7 +3,6 @@ package com.luannv.mf.controllers;
 import com.luannv.mf.dto.request.RoleRequest;
 import com.luannv.mf.dto.response.ApiResponse;
 import com.luannv.mf.dto.response.RoleResponse;
-import com.luannv.mf.models.Role;
 import com.luannv.mf.services.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,7 @@ public class RoleController {
 						.timestamp(System.currentTimeMillis())
 						.build());
 	}
+
 	@PostMapping
 	public ResponseEntity<ApiResponse> createRole(@RequestBody RoleRequest roleRequest) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, RoleResponse>builder()
@@ -36,6 +36,7 @@ public class RoleController {
 						.timestamp(System.currentTimeMillis())
 						.build());
 	}
+
 	@PutMapping("/{name}")
 	public ResponseEntity<ApiResponse> updateRole(@PathVariable String name, @RequestBody RoleRequest roleRequest) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, RoleResponse>builder()
@@ -43,6 +44,7 @@ public class RoleController {
 						.timestamp(System.currentTimeMillis())
 						.build());
 	}
+
 	@DeleteMapping("/{name}")
 	public ResponseEntity<ApiResponse> deleteRoleByName(@PathVariable String name) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, String>builder()

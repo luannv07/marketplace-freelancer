@@ -3,7 +3,6 @@ package com.luannv.mf.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.TypeAlias;
 
 import java.util.Set;
 

@@ -1,6 +1,8 @@
 package com.luannv.mf.exceptions;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
@@ -27,8 +29,8 @@ public enum ErrorCode {
 	LOGIN_FAILED(1018, "Username or password is not valid.", HttpStatus.BAD_REQUEST),
 	BODY_REQUIRED(1019, "Form not null", HttpStatus.BAD_REQUEST),
 	INVALID_TOKEN(1020, "Invalid token.", HttpStatus.BAD_REQUEST),
-
-	UNAUTHENTICATED(1021, "Please login to access this resource.", HttpStatus.BAD_REQUEST);
+	UNAUTHENTICATED(1021, "Please login to access this resource.", HttpStatus.BAD_REQUEST),
+	FORBIDDEN(1022, "You have not permissions to access the resource.", HttpStatus.FORBIDDEN);
 	Integer code;
 	String messages;
 	HttpStatus httpStatus;

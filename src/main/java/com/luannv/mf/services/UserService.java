@@ -1,10 +1,7 @@
 package com.luannv.mf.services;
 
-import com.luannv.mf.dto.request.UserCreationRequest;
-import com.luannv.mf.dto.request.UserLoginRequest;
 import com.luannv.mf.dto.request.UserUpdateRequest;
 import com.luannv.mf.dto.response.UserResponse;
-import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.MultipleErrorsException;
 import com.luannv.mf.exceptions.SingleErrorException;
@@ -13,9 +10,6 @@ import com.luannv.mf.models.Role;
 import com.luannv.mf.models.User;
 import com.luannv.mf.repositories.RoleRepository;
 import com.luannv.mf.repositories.UserRepository;
-import com.luannv.mf.utils.ItemUtils;
-import com.luannv.mf.utils.JwtUtils;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -75,6 +69,7 @@ public class UserService {
 		user = userRepository.save(user);
 		return userCreationMapper.toResponse(user);
 	}
+
 	public String deleteUserByUsername(String username) {
 		User user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));

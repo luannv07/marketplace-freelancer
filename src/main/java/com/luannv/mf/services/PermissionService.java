@@ -1,6 +1,5 @@
 package com.luannv.mf.services;
 
-import com.fasterxml.jackson.databind.util.EnumValues;
 import com.luannv.mf.dto.request.PermissionRequest;
 import com.luannv.mf.dto.response.PermissionResponse;
 import com.luannv.mf.enums.PermissionEnum;
@@ -14,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.List;
 

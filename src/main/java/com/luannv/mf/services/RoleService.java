@@ -3,7 +3,6 @@ package com.luannv.mf.services;
 import com.luannv.mf.dto.request.RoleRequest;
 import com.luannv.mf.dto.response.RoleResponse;
 import com.luannv.mf.enums.PermissionEnum;
-import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.SingleErrorException;
 import com.luannv.mf.mappers.RoleMapper;
@@ -30,6 +29,7 @@ public class RoleService {
 						.map(role -> roleMapper.toResponse(role))
 						.toList();
 	}
+
 	public RoleResponse addRole(RoleRequest roleRequest) {
 		if (roleRepository.existsByName(roleRequest.getName()))
 			throw new SingleErrorException(ErrorCode.ROLE_EXISTED);

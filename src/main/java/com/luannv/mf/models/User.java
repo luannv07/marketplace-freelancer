@@ -1,6 +1,5 @@
 package com.luannv.mf.models;
 
-import com.luannv.mf.dto.response.RoleResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,8 +24,8 @@ public class User {
 	String username;
 	String email;
 	String password;
-	LocalDate createAt;
-	LocalDate updateAt;
+	LocalDateTime createAt;
+	LocalDateTime updateAt;
 	String address;
 	Double ratePoint;
 	@ManyToMany

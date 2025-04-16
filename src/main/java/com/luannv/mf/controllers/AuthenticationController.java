@@ -1,14 +1,12 @@
 package com.luannv.mf.controllers;
 
+import com.luannv.mf.dto.request.LogoutRequest;
 import com.luannv.mf.dto.request.TokenRequest;
 import com.luannv.mf.dto.request.UserCreationRequest;
 import com.luannv.mf.dto.request.UserLoginRequest;
 import com.luannv.mf.dto.response.ApiResponse;
 import com.luannv.mf.dto.response.UserResponse;
-import com.luannv.mf.exceptions.ErrorCode;
-import com.luannv.mf.exceptions.SingleErrorException;
 import com.luannv.mf.services.AuthenticationService;
-import com.luannv.mf.services.UserService;
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -57,16 +55,11 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/logout")
-	public ResponseEntity<ApiResponse> logoutUser() {
-		String jwtId = null;
-		try {
-			jwtId = authenticationService.logout();
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
+	public ResponseEntity<ApiResponse> logoutUser(@RequestBody LogoutRequest logoutRequest) {
+		String usernameLogout = authenticationService.logout(logoutRequest);
 		return ResponseEntity.ok().body(ApiResponse.<Void, String>builder()
 						.timestamp(System.currentTimeMillis())
-						.result(jwtId)
+						.result(usernameLogout)
 						.build());
 	}
 }

@@ -1,6 +1,6 @@
 package com.luannv.mf.configurations;
 
-import com.luannv.mf.dto.response.RoleResponse;
+import com.luannv.mf.dto.request.RoleRequest;
 import com.luannv.mf.enums.PermissionEnum;
 import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
@@ -17,20 +17,40 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
-
 public class ApplicationInitConfig {
 	@Bean
-	ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, RoleMapper roleMapper) {
+	ApplicationRunner applicationRunner(UserRepository userRepository,
+																			RoleRepository roleRepository,
+																			PasswordEncoder passwordEncoder,
+																			RoleMapper roleMapper,
+																			PermissionRepository permissionRepository) {
 		return args -> {
+			Set<Permission> permissions = new HashSet<>();
+			for (PermissionEnum permissionEnum : PermissionEnum.values()) {
+				if (permissionRepository.existsByName(permissionEnum.name())) continue;
+				Permission permission = Permission.builder()
+								.name(permissionEnum.name())
+								.description(permissionEnum.name())
+								.build();
+				permissions.add(permission);
+				permissionRepository.save(permission);
+			}
+			roleRepository.save(Role.builder()
+											.permissions(permissions)
+											.description("ADMIN FULL PERMISSIONS")
+											.name(RoleEnum.ADMIN.name())
+							.build());
 			if (!userRepository.findByUsername("admin").isEmpty())
 				return;
 			Role role = roleRepository.findByName(RoleEnum.ADMIN.name())
 							.orElseThrow(() -> new SingleErrorException(ErrorCode.ROLE_NOTFOUND));
-			System.out.println("NOT FOUND");
 			Set<Role> set = new HashSet<>();
 			set.add(role);
 			User user = User.builder()

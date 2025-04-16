@@ -1,11 +1,9 @@
 package com.luannv.mf.enums;
 
 public enum PermissionEnum {
-	VIEW_USERS,
-	CREATE_PRODUCT,
-	VIEW_PRODUCTS,
-	EDIT_PRODUCT,
-	DELETE_PRODUCT,
-	VIEW_PROFILE,
-	UPDATE_PROFILE
+	USER_VIEW, // view profile
+	USER_UPDATE, // update profile
+	USER_DELETE, // remove profile
+	USER_BAN, // ban profile
+	USER_VIEW_ALL
 }
