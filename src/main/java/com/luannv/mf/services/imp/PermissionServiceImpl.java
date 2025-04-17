@@ -8,6 +8,7 @@ import com.luannv.mf.exceptions.SingleErrorException;
 import com.luannv.mf.mappers.PermissionMapper;
 import com.luannv.mf.models.Permission;
 import com.luannv.mf.repositories.PermissionRepository;
+import com.luannv.mf.services.PermissionService;
 import com.luannv.mf.utils.ItemUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class PermissionServiceImpl {
+public class PermissionServiceImpl implements PermissionService {
 	PermissionRepository permissionRepository;
 	PermissionMapper permissionMapper;
 

@@ -8,6 +8,7 @@ import com.luannv.mf.exceptions.SingleErrorException;
 import com.luannv.mf.mappers.RoleMapper;
 import com.luannv.mf.models.Role;
 import com.luannv.mf.repositories.RoleRepository;
+import com.luannv.mf.services.RoleService;
 import com.luannv.mf.utils.ItemUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class RoleServiceImpl {
+public class RoleServiceImpl implements RoleService {
 	RoleRepository roleRepository;
 	RoleMapper roleMapper;
 

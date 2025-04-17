@@ -14,4 +14,6 @@ public interface PermissionService {
 	PermissionResponse editPermission(String name, PermissionRequest permissionRequest);
 
 	String deletePermission(String name);
+
+	boolean deleteAllPermission();
 }

@@ -10,6 +10,7 @@ import com.luannv.mf.models.Role;
 import com.luannv.mf.models.User;
 import com.luannv.mf.repositories.RoleRepository;
 import com.luannv.mf.repositories.UserRepository;
+import com.luannv.mf.services.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 	UserRepository userRepository;
 	UserCreationMapper userCreationMapper;
 	RoleRepository roleRepository;

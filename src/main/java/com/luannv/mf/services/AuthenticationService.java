@@ -3,6 +3,7 @@ package com.luannv.mf.services;
 import com.luannv.mf.dto.request.LogoutRequest;
 import com.luannv.mf.dto.request.TokenRequest;
 import com.luannv.mf.dto.request.UserCreationRequest;
+import com.luannv.mf.dto.request.UserLoginRequest;
 import com.luannv.mf.dto.response.UserResponse;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.validation.BindingResult;
@@ -15,4 +16,6 @@ public interface AuthenticationService {
 	Boolean authCheckValidToken(TokenRequest tokenRequest) throws ParseException, JOSEException;
 
 	String logout(LogoutRequest logoutRequest);
+
+	String userLogin(UserLoginRequest userLoginRequest);
 }
