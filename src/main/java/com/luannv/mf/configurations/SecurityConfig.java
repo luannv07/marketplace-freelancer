@@ -37,29 +37,34 @@ public class SecurityConfig {
 																								 InvalidatedTokenService invalidatedTokenService,
 																								 InvalidatedTokenRepository invalidatedTokenRepository) throws Exception {
 		http.authorizeHttpRequests(auth -> auth
+						.requestMatchers(
+										"/v3/api-docs/**",
+										"/swagger-ui/**",
+										"/swagger-ui.html",
+										"/swagger-resources/**",
+										"/configuration/**",
+										"/webjars/**"
+						).permitAll()
 						.requestMatchers("/api/auth/**").permitAll()
 						.requestMatchers("/api/permissions/**", "/api/roles/**").hasRole(RoleEnum.ADMIN.name())
-						.anyRequest().authenticated()
-		);
+						.anyRequest().authenticated());
 		http.csrf(c -> c.disable());
-		http.addFilterBefore(new PreventInvalidatedTokenFilter(invalidatedTokenRepository), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new PreventInvalidatedTokenFilter(invalidatedTokenRepository),
+						UsernamePasswordAuthenticationFilter.class);
 
 		http.oauth2ResourceServer(oauth -> oauth
 						.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-										.jwtAuthenticationConverter(jwtAuthenticationConverter())
-						)
-						.authenticationEntryPoint((request, response, authException) ->
-										convertJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, ErrorCode.UNAUTHENTICATED.getMessages()))
-						.accessDeniedHandler((request, response, accessDeniedException) ->
-										convertJsonResponse(response, HttpServletResponse.SC_FORBIDDEN, ErrorCode.FORBIDDEN.getMessages()))
-		);
+										.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+						.authenticationEntryPoint((request, response, authException) -> convertJsonResponse(response,
+										HttpServletResponse.SC_UNAUTHORIZED, ErrorCode.UNAUTHENTICATED.getMessages()))
+						.accessDeniedHandler((request, response, accessDeniedException) -> convertJsonResponse(response,
+										HttpServletResponse.SC_FORBIDDEN, ErrorCode.FORBIDDEN.getMessages())));
 		http
 						.exceptionHandling(exp -> exp
-										.authenticationEntryPoint((request, response, authException) ->
-														convertJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, ErrorCode.UNAUTHENTICATED.getMessages()))
-										.accessDeniedHandler((request, response, accessDeniedException) ->
-														convertJsonResponse(response, HttpServletResponse.SC_FORBIDDEN, ErrorCode.FORBIDDEN.getMessages()))
-						);
+										.authenticationEntryPoint((request, response, authException) -> convertJsonResponse(response,
+														HttpServletResponse.SC_UNAUTHORIZED, ErrorCode.UNAUTHENTICATED.getMessages()))
+										.accessDeniedHandler((request, response, accessDeniedException) -> convertJsonResponse(response,
+														HttpServletResponse.SC_FORBIDDEN, ErrorCode.FORBIDDEN.getMessages())));
 
 		return http.build();
 	}
@@ -68,12 +73,12 @@ public class SecurityConfig {
 		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
 			String[] scopeList = jwt.getClaimAsString("scope").split(" ");
-			if (scopeList == null || scopeList.length == 0) return Collections.emptyList();
+			if (scopeList == null || scopeList.length == 0)
+				return Collections.emptyList();
 			return Arrays.stream(scopeList)
-							.map(item ->
-											!ItemUtils.isItemOfEnum(item, RoleEnum.class)
-															? new SimpleGrantedAuthority(item)
-															: new SimpleGrantedAuthority("ROLE_" + item))
+							.map(item -> !ItemUtils.isItemOfEnum(item, RoleEnum.class)
+											? new SimpleGrantedAuthority(item)
+											: new SimpleGrantedAuthority("ROLE_" + item))
 							.collect(Collectors.toSet());
 		});
 		return jwtAuthenticationConverter;

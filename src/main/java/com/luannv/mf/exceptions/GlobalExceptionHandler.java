@@ -1,14 +1,18 @@
 package com.luannv.mf.exceptions;
 
-import com.luannv.mf.dto.response.ApiResponse;
+import java.text.ParseException;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.text.ParseException;
-import java.util.Map;
+import com.luannv.mf.dto.response.ApiResponse;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -54,7 +58,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<ApiResponse> httpMessageNotReadableExceptionException(HttpMessageNotReadableException exception) {
+	public ResponseEntity<ApiResponse> httpMessageNotReadableExceptionException(
+					HttpMessageNotReadableException exception) {
 		return ResponseEntity.badRequest().body(ApiResponse.<String, Void>builder()
 						.message(ErrorCode.BODY_REQUIRED.getMessages())
 						.timestamp(System.currentTimeMillis())
@@ -68,4 +73,12 @@ public class GlobalExceptionHandler {
 						.timestamp(System.currentTimeMillis())
 						.build());
 	}
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ApiResponse> accessDeniedException(AccessDeniedException exception) {
+		return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body(ApiResponse.<String, Void>builder()
+						.message(ErrorCode.FORBIDDEN.getMessages())
+						.timestamp(System.currentTimeMillis())
+						.build());
+	}
+
 }
