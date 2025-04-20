@@ -5,10 +5,16 @@ import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.repositories.InvalidatedTokenRepository;
 import com.luannv.mf.services.InvalidatedTokenService;
 import com.luannv.mf.utils.ItemUtils;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +25,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Arrays;
@@ -49,6 +56,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/permissions/**", "/api/roles/**").hasRole(RoleEnum.ADMIN.name())
 						.anyRequest().authenticated());
 		http.csrf(c -> c.disable());
+		http.cors(Customizer.withDefaults());
 		http.addFilterBefore(new PreventInvalidatedTokenFilter(invalidatedTokenRepository),
 						UsernamePasswordAuthenticationFilter.class);
 
@@ -65,12 +73,12 @@ public class SecurityConfig {
 														HttpServletResponse.SC_UNAUTHORIZED, ErrorCode.UNAUTHENTICATED.getMessages()))
 										.accessDeniedHandler((request, response, accessDeniedException) -> convertJsonResponse(response,
 														HttpServletResponse.SC_FORBIDDEN, ErrorCode.FORBIDDEN.getMessages())));
-
 		return http.build();
 	}
 
 	public JwtAuthenticationConverter jwtAuthenticationConverter() {
 		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setPrincipalClaimName("username");
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
 			String[] scopeList = jwt.getClaimAsString("scope").split(" ");
 			if (scopeList == null || scopeList.length == 0)
@@ -97,5 +105,17 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
+	private SecurityScheme securityScheme() {
+		return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+						.bearerFormat("JWT")
+						.scheme("bearer");
+	}
+	@Bean
+	public OpenAPI openAPI() {
+		return new OpenAPI()
+						.addSecurityItem(new SecurityRequirement()
+						.addList("Bearer Authentication"))
+						.components(new Components().addSecuritySchemes("Bearer Authentication", securityScheme()))
+						.info(new Info());
+	}
 }

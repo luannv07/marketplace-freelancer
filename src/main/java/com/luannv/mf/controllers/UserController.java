@@ -10,16 +10,23 @@ import com.luannv.mf.models.User;
 import com.luannv.mf.repositories.PermissionRepository;
 import com.luannv.mf.repositories.UserRepository;
 import com.luannv.mf.services.UserService;
+import com.luannv.mf.utils.ServletUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
 import java.util.List;
 
 
@@ -27,6 +34,7 @@ import java.util.List;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "User Controller", description = "Users Management")
 public class UserController {
 	UserService userService;
 	// api for testing
@@ -54,6 +62,7 @@ public class UserController {
 	}
 	@PreAuthorize(value = "hasRole('ADMIN')")
 	@GetMapping
+	@Operation(description = "Only for User who have the ADMIN role.", summary = "Get all users")
 	public ResponseEntity<ApiResponse> getAllUsers() {
 		List<UserResponse> users = userService.getAll();
 		return ResponseEntity.ok().body(ApiResponse.<Void, List<UserResponse>>builder()
@@ -63,7 +72,8 @@ public class UserController {
 	}
 	@PreAuthorize(value = "hasAuthority('USER_VIEW')")
 	@GetMapping("/{username}")
-	public ResponseEntity<ApiResponse> getUserByUsername(@PathVariable String username) {
+	@Operation(description = "All user can find another user.", summary = "Get user info")
+	public ResponseEntity<ApiResponse> getUserByUsername(@Parameter(description = "username for find", required = true) @PathVariable String username) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, UserResponse>builder()
 						.timestamp(System.currentTimeMillis())
 						.result(userService.getByUsername(username))
@@ -71,7 +81,8 @@ public class UserController {
 	}
 	@PreAuthorize(value = "hasRole('ADMIN') or #username == authentication.name")
 	@PutMapping("/{username}")
-	public ResponseEntity<ApiResponse> editUser(@PathVariable String username,
+	@Operation(description = "Only user who have the ADMIN role or username equals username gave can update.", summary = "Update user")
+	public ResponseEntity<ApiResponse> editUser(@Parameter(description = "username for update", required = true) @PathVariable String username,
 																							@Valid @RequestBody UserUpdateRequest userUpdateRequest,
 																							BindingResult bindingResult) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, UserResponse>builder()
@@ -81,6 +92,7 @@ public class UserController {
 	}
 	@PreAuthorize(value = "hasRole('ADMIN') or #username == authentication.name")
 	@DeleteMapping("/{username}")
+	@Operation(description = "The user who have the ADMIN role or username equals username gave can delete.", summary = "Delete user")
 	public ResponseEntity<ApiResponse> removeUser(@PathVariable String username) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, String>builder()
 						.timestamp(System.currentTimeMillis())

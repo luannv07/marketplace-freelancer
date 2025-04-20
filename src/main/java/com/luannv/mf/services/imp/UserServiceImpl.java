@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 		if (!errors.isEmpty())
 			throw new MultipleErrorsException(errors);
 		user.setRoles(set);
-		user.setPassword(userUpdateRequest.getPassword());
+		user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
 		user.setAddress(userUpdateRequest.getAddress());
 		user = userRepository.save(user);
 		return userCreationMapper.toResponse(user);
