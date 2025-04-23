@@ -1,6 +1,7 @@
 package com.luannv.mf.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.luannv.mf.models.Skill;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,4 +24,6 @@ public class UserResponse {
 	LocalDateTime updateAt;
 	Double rating;
 	Set<RoleResponse> roles;
+	String companyName;
+	Set<Skill> skills;
 }

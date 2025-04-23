@@ -15,7 +15,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 @Component
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
-public class UserCreationMapper implements GenericMapper<User, UserCreationRequest, UserResponse> {
+public class UserMapper implements GenericMapper<User, UserCreationRequest, UserResponse> {
 	PasswordEncoder passwordEncoder;
 	RoleRepository roleRepository;
 	RoleMapper roleMapper;

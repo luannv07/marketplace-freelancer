@@ -1,5 +1,7 @@
 package com.luannv.mf.services;
 
+import com.luannv.mf.dto.request.ClientFieldsRequest;
+import com.luannv.mf.dto.request.FreelancerFieldsRequest;
 import com.luannv.mf.dto.request.UserUpdateRequest;
 import com.luannv.mf.dto.response.UserResponse;
 import org.springframework.validation.BindingResult;
@@ -15,4 +17,13 @@ public interface UserService {
 	UserResponse updateUser(String username, UserUpdateRequest userUpdateRequest, BindingResult bindingResult);
 
 	String deleteUserByUsername(String username);
+
+
+	Void deleteAll();
+
+	UserResponse addFieldDetailsClient(String username, ClientFieldsRequest clientFieldsRequest);
+
+	UserResponse addFieldDetailsFreelancer(String username, FreelancerFieldsRequest freelancerFieldsRequest);
+
+	UserResponse getMyInfo();
 }

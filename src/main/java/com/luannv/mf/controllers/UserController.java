@@ -1,5 +1,7 @@
 package com.luannv.mf.controllers;
 
+import com.luannv.mf.dto.request.ClientFieldsRequest;
+import com.luannv.mf.dto.request.FreelancerFieldsRequest;
 import com.luannv.mf.dto.request.UserLoginRequest;
 import com.luannv.mf.dto.request.UserUpdateRequest;
 import com.luannv.mf.dto.response.ApiResponse;
@@ -79,6 +81,15 @@ public class UserController {
 						.result(userService.getByUsername(username))
 						.build());
 	}
+	@PreAuthorize(value = "hasAuthority('USER_VIEW')")
+	@GetMapping("/me")
+	@Operation(description = "My info.", summary = "My info")
+	public ResponseEntity<ApiResponse> getMyInfo() {
+		return ResponseEntity.ok().body(ApiResponse.<Void, UserResponse>builder()
+						.timestamp(System.currentTimeMillis())
+						.result(userService.getMyInfo())
+						.build());
+	}
 	@PreAuthorize(value = "hasRole('ADMIN') or #username == authentication.name")
 	@PutMapping("/{username}")
 	@Operation(description = "Only user who have the ADMIN role or username equals username gave can update.", summary = "Update user")
@@ -99,4 +110,32 @@ public class UserController {
 						.result(userService.deleteUserByUsername(username))
 						.build());
 	}
+	@PreAuthorize(value = "hasRole('ADMIN')")
+	@DeleteMapping
+	@Operation(description = "Clear all users.", summary = "Delete all user")
+	public ResponseEntity<ApiResponse> deleteAllUsers() {
+		return ResponseEntity.ok().body(ApiResponse.<Void, Void>builder()
+						.timestamp(System.currentTimeMillis())
+						.result(userService.deleteAll())
+						.build());
+	}
+	@PreAuthorize(value = "hasRole('ADMIN') or #username == authentication.name")
+	@PostMapping("/completed/details/client/{username}")
+	@Operation(description = "Add company name", summary = "Addtional fields")
+	public ResponseEntity<ApiResponse> addClientDetals(@PathVariable String username, @RequestBody ClientFieldsRequest clientFieldsRequest) {
+		return ResponseEntity.ok().body(ApiResponse.<Void, UserResponse>builder()
+						.timestamp(System.currentTimeMillis())
+						.result(userService.addFieldDetailsClient(username, clientFieldsRequest)) // username lay tu SecurityContextHolder
+						.build());
+	}
+	@PreAuthorize(value = "hasRole('ADMIN') or #username == authentication.name")
+	@PostMapping("/completed/details/freelancer/{username}")
+	@Operation(description = "Add skills", summary = "Addtional fields")
+	public ResponseEntity<ApiResponse> addFreelancerDetals(@PathVariable String username , @RequestBody FreelancerFieldsRequest freelancerFieldsRequest) {
+		return ResponseEntity.ok().body(ApiResponse.<Void, UserResponse>builder()
+						.timestamp(System.currentTimeMillis())
+						.result(userService.addFieldDetailsFreelancer(username, freelancerFieldsRequest)) // username lay tu SecurityContextHolder
+						.build());
+	}
+
 }

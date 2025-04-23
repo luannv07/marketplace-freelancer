@@ -30,4 +30,8 @@ public class User {
 	Double ratePoint;
 	@ManyToMany
 	Set<Role> roles;
+	@OneToOne(mappedBy = "userClientProfile", cascade = CascadeType.ALL)
+	ClientProfile clientProfile;
+	@OneToOne(mappedBy = "userFreelancerProfile", cascade = CascadeType.ALL)
+	FreelancerProfile freelancerProfile;
 }

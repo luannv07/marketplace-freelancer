@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LogoutRequest {
+public class SkillRequest {
 	@NotBlank(message = "FIELD_NOTBLANK")
-	String token;
+	String name;
 }

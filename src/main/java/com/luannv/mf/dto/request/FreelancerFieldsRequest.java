@@ -4,13 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LogoutRequest {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class FreelancerFieldsRequest {
 	@NotBlank(message = "FIELD_NOTBLANK")
-	String token;
+	Set<String> skills;
 }

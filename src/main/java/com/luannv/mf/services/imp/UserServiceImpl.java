@@ -1,19 +1,26 @@
 package com.luannv.mf.services.imp;
 
+import com.luannv.mf.dto.request.ClientFieldsRequest;
+import com.luannv.mf.dto.request.FreelancerFieldsRequest;
+import com.luannv.mf.dto.request.SkillRequest;
 import com.luannv.mf.dto.request.UserUpdateRequest;
 import com.luannv.mf.dto.response.UserResponse;
+import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.MultipleErrorsException;
 import com.luannv.mf.exceptions.SingleErrorException;
 import com.luannv.mf.mappers.UserCreationMapper;
-import com.luannv.mf.models.Role;
-import com.luannv.mf.models.User;
-import com.luannv.mf.repositories.RoleRepository;
-import com.luannv.mf.repositories.UserRepository;
+import com.luannv.mf.mappers.UserMapper;
+import com.luannv.mf.mappers.UserUpdateMapper;
+import com.luannv.mf.models.*;
+import com.luannv.mf.repositories.*;
+import com.luannv.mf.services.SkillService;
 import com.luannv.mf.services.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -24,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -32,15 +40,21 @@ public class UserServiceImpl implements UserService {
 	UserCreationMapper userCreationMapper;
 	RoleRepository roleRepository;
 	PasswordEncoder passwordEncoder;
+	UserUpdateMapper userUpdateMapper;
+	UserMapper userMapper;
+	ClientDetailRepository clientDetailRepository;
+	FreelancerDetailRepository freelancerDetailRepository;
+	SkillRepository skillRepository;
+	SkillService skillService;
 
 	public List<UserResponse> getAll() {
-		return userRepository.findAll().stream().map(user -> userCreationMapper.toResponse(user)).toList();
+		return userRepository.findAll().stream().map(user -> userMapper.toResponse(user)).toList();
 	}
 
 	public UserResponse getByUsername(String username) {
 		User user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
-		return userCreationMapper.toResponse(user);
+		return userMapper.toResponse(user);
 	}
 
 	public UserResponse updateUser(String username, UserUpdateRequest userUpdateRequest, BindingResult bindingResult) {
@@ -68,7 +82,7 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
 		user.setAddress(userUpdateRequest.getAddress());
 		user = userRepository.save(user);
-		return userCreationMapper.toResponse(user);
+		return userUpdateMapper.toResponse(user);
 	}
 
 	public String deleteUserByUsername(String username) {
@@ -78,4 +92,64 @@ public class UserServiceImpl implements UserService {
 		return username;
 	}
 
+	@Override
+	public Void deleteAll() {
+		userRepository.deleteAll();
+		return null;
+	}
+
+	@Override
+	public UserResponse addFieldDetailsClient(String username, ClientFieldsRequest clientFieldsRequest) {
+		User user = userRepository.findByUsername(username)
+						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
+
+		if (!checkValidRole(user.getRoles(), RoleEnum.CLIENT.name()) || clientDetailRepository.existsByUserClientProfile(user))
+			throw new SingleErrorException(ErrorCode.SPAM_CLIENT_DETAIL_FIELD);
+		user.setClientProfile(ClientProfile.builder()
+						.companyName(clientFieldsRequest.getCompanyName())
+						.userClientProfile(user)
+						.build());
+		user = userRepository.save(user);
+		return userMapper.toResponse(user);
+	}
+
+	@Override
+	public UserResponse addFieldDetailsFreelancer(String username, FreelancerFieldsRequest freelancerFieldsRequest) {
+		User user = userRepository.findByUsername(username)
+						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
+
+		if (!checkValidRole(user.getRoles(), RoleEnum.FREELANCER.name()) || freelancerDetailRepository.existsByUserFreelancerProfile(user))
+			throw new SingleErrorException(ErrorCode.SPAM_FREELANCER_DETAIL_FIELD);
+		Set<Skill> skills = freelancerFieldsRequest
+						.getSkills()
+						.stream()
+						.map(s -> {
+							if (skillRepository.existsByName(s))
+								return skillRepository.findByName(s);
+							return skillService.saveSkill(SkillRequest.builder()
+											.name(s)
+											.build());
+						})
+						.collect(Collectors.toSet());
+		user.setFreelancerProfile(FreelancerProfile.builder()
+						.skills(skills)
+						.userFreelancerProfile(user)
+						.build());
+		user = userRepository.save(user);
+		return userMapper.toResponse(user);
+	}
+
+	@Override
+	public UserResponse getMyInfo() {
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userRepository.findByUsername(currentUser).get();
+		return userMapper.toResponse(user);
+	}
+
+	public Boolean checkValidRole(Set<Role> roles, String roleName) {
+		return roles
+						.stream()
+						.anyMatch(role -> role
+										.getName().equalsIgnoreCase(roleName));
+	}
 }

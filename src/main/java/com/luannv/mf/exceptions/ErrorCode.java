@@ -30,7 +30,12 @@ public enum ErrorCode {
 	BODY_REQUIRED(1019, "Form not null", HttpStatus.BAD_REQUEST),
 	INVALID_TOKEN(1020, "Invalid token.", HttpStatus.BAD_REQUEST),
 	UNAUTHENTICATED(1021, "Please login to access this resource.", HttpStatus.BAD_REQUEST),
-	FORBIDDEN(1022, "You have not permissions to access the resource.", HttpStatus.FORBIDDEN);
+	FORBIDDEN(1022, "You have not permissions to access the resource.", HttpStatus.FORBIDDEN),
+	INVALID_VALUE(1013, "Invalid value.",HttpStatus.BAD_REQUEST ),
+	SPAM_CLIENT_DETAIL_FIELD(1014, "You can not set info again.", HttpStatus.BAD_REQUEST),
+	SPAM_FREELANCER_DETAIL_FIELD(1015, "You can not set info again.", HttpStatus.BAD_REQUEST),
+	SKILL_EXISTED(1016, "Skill existed.", HttpStatus.BAD_REQUEST),
+	SKILL_INVALID(1017, "Skill invalid", HttpStatus.BAD_REQUEST);
 	Integer code;
 	String messages;
 	HttpStatus httpStatus;

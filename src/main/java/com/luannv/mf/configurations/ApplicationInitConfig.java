@@ -42,11 +42,12 @@ public class ApplicationInitConfig {
 				permissions.add(permission);
 				permissionRepository.save(permission);
 			}
-			roleRepository.save(Role.builder()
-											.permissions(permissions)
-											.description("ADMIN FULL PERMISSIONS")
-											.name(RoleEnum.ADMIN.name())
-							.build());
+			if (!roleRepository.existsByName(RoleEnum.ADMIN.name()))
+				roleRepository.save(Role.builder()
+								.permissions(permissions)
+								.description("ADMIN FULL PERMISSIONS")
+								.name(RoleEnum.ADMIN.name())
+								.build());
 			if (!userRepository.findByUsername("admin").isEmpty())
 				return;
 			Role role = roleRepository.findByName(RoleEnum.ADMIN.name())

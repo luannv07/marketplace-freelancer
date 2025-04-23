@@ -6,11 +6,10 @@ import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LogoutRequest {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class ClientFieldsRequest {
 	@NotBlank(message = "FIELD_NOTBLANK")
-	String token;
+	String companyName;
 }

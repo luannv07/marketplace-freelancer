@@ -3,6 +3,7 @@ package com.luannv.mf.mappers;
 import com.luannv.mf.dto.request.UserUpdateRequest;
 import com.luannv.mf.dto.response.RoleResponse;
 import com.luannv.mf.dto.response.UserResponse;
+import com.luannv.mf.models.Skill;
 import com.luannv.mf.models.User;
 import com.luannv.mf.repositories.RoleRepository;
 import lombok.AccessLevel;
@@ -21,7 +22,7 @@ public class UserUpdateMapper implements GenericMapper<User, UserUpdateRequest, 
 	PasswordEncoder passwordEncoder;
 	RoleRepository roleRepository;
 	RoleMapper roleMapper;
-
+UserResponseMapper userResponseMapper;
 	@Override
 	public User toEntity(UserUpdateRequest userUpdateRequest) {
 
@@ -33,18 +34,7 @@ public class UserUpdateMapper implements GenericMapper<User, UserUpdateRequest, 
 
 	@Override
 	public UserResponse toResponse(User user) {
-//		Set<Role> set = user.getRoles();
-		Set<RoleResponse> set = user.getRoles()
-						.stream()
-						.map(role -> roleMapper.toResponse(role))
-						.collect(Collectors.toSet());
-		return UserResponse.builder()
-						.roles(set)
-						.rating(user.getRatePoint())
-						.address(user.getAddress())
-						.username(user.getUsername())
-						.createAt(user.getCreateAt())
-						.updateAt(user.getUpdateAt())
-						.build();
+		return userResponseMapper.toResponse(user);
 	}
+
 }
