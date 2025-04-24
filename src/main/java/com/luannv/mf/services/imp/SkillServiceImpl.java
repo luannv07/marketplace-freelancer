@@ -38,7 +38,7 @@ public class SkillServiceImpl implements SkillService {
 	public Skill saveSkill(SkillRequest skill) {
 		if (skillRepository.existsByName(skill.getName()))
 			throw new SingleErrorException(ErrorCode.SKILL_EXISTED);
-		if (ItemUtils.isItemOfEnum(skill.getName(), SkillEnum.class))
+		if (!ItemUtils.isItemOfEnum(skill.getName(), SkillEnum.class))
 			throw new SingleErrorException(ErrorCode.SKILL_INVALID);
 		return skillRepository.save(skillMapper.toEntity(skill));
 	}

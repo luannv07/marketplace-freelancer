@@ -5,5 +5,6 @@ public enum PermissionEnum {
 	USER_UPDATE, // update profile
 	USER_DELETE, // remove profile
 	USER_BAN, // ban profile
-	USER_VIEW_ALL
+	USER_VIEW_ALL,
+	CREATE_PRODUCT
 }
