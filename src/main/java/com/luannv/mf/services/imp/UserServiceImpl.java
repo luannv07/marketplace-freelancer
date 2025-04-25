@@ -1,9 +1,7 @@
 package com.luannv.mf.services.imp;
 
-import com.luannv.mf.dto.request.ClientFieldsRequest;
-import com.luannv.mf.dto.request.FreelancerFieldsRequest;
-import com.luannv.mf.dto.request.SkillRequest;
-import com.luannv.mf.dto.request.UserUpdateRequest;
+import com.luannv.mf.configurations.SecurityConfig;
+import com.luannv.mf.dto.request.*;
 import com.luannv.mf.dto.response.UserResponse;
 import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
@@ -25,10 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -67,24 +62,52 @@ public class UserServiceImpl implements UserService {
 															.getMessages()));
 		User user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
-
-		Set<Role> set = userUpdateRequest
-						.getRoles()
+		Boolean containRoles = SecurityContextHolder
+						.getContext()
+						.getAuthentication()
+						.getAuthorities()
 						.stream()
-						.map(role -> roleRepository.findByName(role)
-										.orElseThrow(() -> new SingleErrorException(ErrorCode.ROLE_NOTFOUND)))
-						.collect(Collectors.toSet());
-		if (!passwordEncoder.matches(userUpdateRequest.getOldPassword(), user.getPassword()))
-			errors.put("password", ErrorCode.PASSWORD_NOTVALID.getMessages());
+						.anyMatch(grantedAuthority -> grantedAuthority
+										.getAuthority()
+										.equalsIgnoreCase("ROLE_" + RoleEnum.ADMIN));
+		if (containRoles) {
+			Set<Role> set = userUpdateRequest
+							.getRoles()
+							.stream()
+							.map(role -> roleRepository.findByName(role)
+											.orElseThrow(() -> new SingleErrorException(ErrorCode.ROLE_NOTFOUND)))
+							.collect(Collectors.toSet());
+			user.setRoles(set);
+		}
+//		if (!passwordEncoder.matches(userUpdateRequest.getOldPassword(), user.getPassword()))
+//			errors.put("password", ErrorCode.PASSWORD_NOTVALID.getMessages());
 		if (!errors.isEmpty())
 			throw new MultipleErrorsException(errors);
-		user.setRoles(set);
-		user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+//		user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
 		user.setAddress(userUpdateRequest.getAddress());
 		user = userRepository.save(user);
 		return userUpdateMapper.toResponse(user);
 	}
 
+	@Override
+	public UserResponse updatePasswordUser(String username, UserPasswordUpdateRequest userPasswordUpdateRequest, BindingResult bindingResult) {
+		Map<String, String> errors = new HashMap<>();
+		if (bindingResult.hasErrors())
+			bindingResult
+							.getFieldErrors()
+							.forEach(fieldError ->
+											errors.put(fieldError.getField(), ErrorCode.valueOf(fieldError.getDefaultMessage())
+															.getMessages()));
+		User user = userRepository.findByUsername(username)
+						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
+		if (!passwordEncoder.matches(userPasswordUpdateRequest.getOldPassword(), user.getPassword()))
+			errors.put("password", ErrorCode.PASSWORD_NOTVALID.getMessages());
+		if (!errors.isEmpty())
+			throw new MultipleErrorsException(errors);
+		user.setPassword(passwordEncoder.encode(userPasswordUpdateRequest.getNewPassword()));
+		user = userRepository.save(user);
+		return userUpdateMapper.toResponse(user);
+	}
 	public String deleteUserByUsername(String username) {
 		User user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));

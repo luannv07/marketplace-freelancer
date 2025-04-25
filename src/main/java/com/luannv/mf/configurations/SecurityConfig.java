@@ -50,7 +50,8 @@ public class SecurityConfig {
 										"/swagger-ui.html",
 										"/swagger-resources/**",
 										"/configuration/**",
-										"/webjars/**"
+										"/webjars/**",
+										"/api/users/test"
 						).permitAll()
 						.requestMatchers("/api/auth/**").permitAll()
 						.requestMatchers("/api/permissions/**", "/api/roles/**").hasRole(RoleEnum.ADMIN.name())
