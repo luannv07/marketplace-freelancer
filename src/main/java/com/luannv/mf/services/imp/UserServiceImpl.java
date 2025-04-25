@@ -1,6 +1,5 @@
 package com.luannv.mf.services.imp;
 
-import com.luannv.mf.configurations.SecurityConfig;
 import com.luannv.mf.dto.request.*;
 import com.luannv.mf.dto.response.UserResponse;
 import com.luannv.mf.enums.RoleEnum;
@@ -23,7 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -100,14 +102,21 @@ public class UserServiceImpl implements UserService {
 															.getMessages()));
 		User user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
-		if (!passwordEncoder.matches(userPasswordUpdateRequest.getOldPassword(), user.getPassword()))
-			errors.put("password", ErrorCode.PASSWORD_NOTVALID.getMessages());
+		if (userPasswordUpdateRequest.getOldPassword() == null)
+			errors.put("oldPassword", ErrorCode.FIELD_NOTBLANK.getMessages());
+		if (userPasswordUpdateRequest.getNewPassword() == null)
+			errors.put("newPassword", ErrorCode.FIELD_NOTBLANK.getMessages());
+		if (userPasswordUpdateRequest.getConfirmPassword() == null)
+			errors.put("confirmPassword", ErrorCode.FIELD_NOTBLANK.getMessages());
 		if (!errors.isEmpty())
 			throw new MultipleErrorsException(errors);
+		if (!passwordEncoder.matches(userPasswordUpdateRequest.getOldPassword(), user.getPassword()))
+			throw new SingleErrorException(ErrorCode.PASSWORD_NOTVALID);
 		user.setPassword(passwordEncoder.encode(userPasswordUpdateRequest.getNewPassword()));
 		user = userRepository.save(user);
 		return userUpdateMapper.toResponse(user);
 	}
+
 	public String deleteUserByUsername(String username) {
 		User user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
