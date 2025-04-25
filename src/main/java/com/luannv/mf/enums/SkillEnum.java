@@ -1,10 +1,25 @@
 package com.luannv.mf.enums;
 
+import org.hibernate.annotations.processing.SQL;
+
 public enum SkillEnum {
-	Java,
+	JAVA,
 	HTML,
 	CSS,
-	JavaScript,
-	CSharp,
-	Python
+	JAVASCRIPT,
+	CSHARP,
+	PYTHON,
+	C,
+	CPP,
+	RUBY,
+	PHP,
+	SWIFT,
+	KOTLIN,
+	TYPESCRIPT,
+	GO,
+	RUST,
+	SQL,
+	R,
+	MATLAB,
+	DART
 }

@@ -14,4 +14,5 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SkillResponse {
 	String name;
+	Integer isActive;
 }

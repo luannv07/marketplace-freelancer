@@ -16,6 +16,7 @@ public class SkillMapper implements GenericMapper<Skill, SkillRequest, SkillResp
 	public Skill toEntity(SkillRequest skillRequest) {
 		return Skill.builder()
 						.name(skillRequest.getName())
+						.isActive(1)
 						.build();
 	}
 
@@ -23,6 +24,7 @@ public class SkillMapper implements GenericMapper<Skill, SkillRequest, SkillResp
 	public SkillResponse toResponse(Skill skill) {
 		return SkillResponse.builder()
 						.name(skill.getName())
+						.isActive(skill.getIsActive())
 						.build();
 	}
 }

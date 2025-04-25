@@ -1,11 +1,13 @@
 package com.luannv.mf.services.imp;
 
 import com.luannv.mf.dto.request.*;
+import com.luannv.mf.dto.response.SkillResponse;
 import com.luannv.mf.dto.response.UserResponse;
 import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.MultipleErrorsException;
 import com.luannv.mf.exceptions.SingleErrorException;
+import com.luannv.mf.mappers.SkillMapper;
 import com.luannv.mf.mappers.UserCreationMapper;
 import com.luannv.mf.mappers.UserMapper;
 import com.luannv.mf.mappers.UserUpdateMapper;
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService {
 	FreelancerDetailRepository freelancerDetailRepository;
 	SkillRepository skillRepository;
 	SkillService skillService;
+	SkillMapper skillMapper;
 
 	public List<UserResponse> getAll() {
 		return userRepository.findAll().stream().map(user -> userMapper.toResponse(user)).toList();
@@ -60,7 +63,8 @@ public class UserServiceImpl implements UserService {
 			bindingResult
 							.getFieldErrors()
 							.forEach(fieldError ->
-											errors.put(fieldError.getField(), ErrorCode.valueOf(fieldError.getDefaultMessage())
+											errors.put(fieldError.getField(), ErrorCode
+															.valueOf(fieldError.getDefaultMessage())
 															.getMessages()));
 		User user = userRepository.findByUsername(username)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.USER_NOTFOUND));
@@ -157,10 +161,10 @@ public class UserServiceImpl implements UserService {
 						.stream()
 						.map(s -> {
 							if (skillRepository.existsByName(s))
-								return skillRepository.findByName(s);
+								return skillRepository.findByName(s).get();
 							return skillService.saveSkill(SkillRequest.builder()
-											.name(s)
-											.build());
+															.name(s)
+															.build());
 						})
 						.collect(Collectors.toSet());
 		user.setFreelancerProfile(FreelancerProfile.builder()

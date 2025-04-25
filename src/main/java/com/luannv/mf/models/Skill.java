@@ -17,4 +17,6 @@ public class Skill {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer id;
 	String name;
+	@Column(columnDefinition = "TINYINT(1) DEFAULT 1")
+	Integer isActive = 1;
 }

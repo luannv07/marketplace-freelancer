@@ -28,10 +28,14 @@ public class SkillServiceImpl implements SkillService {
 	SkillMapper skillMapper;
 	@Override
 	public Set<SkillResponse> getAll() {
-		return skillRepository.findAll()
-						.stream()
-						.map(skill -> skillMapper.toResponse(skill))
-						.collect(Collectors.toSet());
+		try {
+			return skillRepository.findAll()
+							.stream()
+							.map(skill -> skillMapper.toResponse(skill))
+							.collect(Collectors.toSet());
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -41,5 +45,13 @@ public class SkillServiceImpl implements SkillService {
 		if (!ItemUtils.isItemOfEnum(skill.getName(), SkillEnum.class))
 			throw new SingleErrorException(ErrorCode.SKILL_INVALID);
 		return skillRepository.save(skillMapper.toEntity(skill));
+	}
+
+	@Override
+	public void deactiveAnSkill(String skill) {
+		Skill skillEntity = skillRepository
+						.findByName(skill).orElseThrow(() -> new SingleErrorException(ErrorCode.SKILL_NOTFOUND));
+		skillEntity.setIsActive(0);
+		skillRepository.save(skillEntity);
 	}
 }
