@@ -36,8 +36,12 @@ public enum ErrorCode {
 	SPAM_FREELANCER_DETAIL_FIELD(1025, "You cannot set this information again.", HttpStatus.BAD_REQUEST),
 	SKILL_EXISTED(1026, "Skill already exists.", HttpStatus.BAD_REQUEST),
 	SKILL_INVALID(1027, "Skill is invalid.", HttpStatus.BAD_REQUEST),
-	SKILL_NOTFOUND(1028, "Skill name not found.", HttpStatus.NOT_FOUND);
+	SKILL_NOTFOUND(1028, "Skill name not found.", HttpStatus.NOT_FOUND),
+	PROJECT_NOTFOUND(1029, "Project not found.", HttpStatus.BAD_REQUEST),
+	PROJECT_NOTVALID(1030, "Project not valid.", HttpStatus.BAD_REQUEST),
+	BUDGET_MIN_NOTVALID(1031, "Budget min is not bigger than Budget max",HttpStatus.BAD_REQUEST )
 
+	;
 	Integer code;
 	String messages;
 	HttpStatus httpStatus;

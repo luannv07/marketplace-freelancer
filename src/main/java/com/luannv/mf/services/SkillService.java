@@ -9,6 +9,6 @@ import java.util.Set;
 public interface SkillService {
 	Set<SkillResponse> getAll();
 	Skill saveSkill(SkillRequest skill);
-
 	void deactiveAnSkill(String skill);
+	Set<Skill> resolveSkills(Set<String> skills);
 }

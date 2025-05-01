@@ -54,4 +54,10 @@ public class SkillServiceImpl implements SkillService {
 		skillEntity.setIsActive(0);
 		skillRepository.save(skillEntity);
 	}
+	public Set<Skill> resolveSkills(Set<String> skills) {
+		return skills.stream()
+						.map(s -> skillRepository.findByName(s)
+										.orElseThrow(() -> new SingleErrorException(ErrorCode.SKILL_NOTFOUND)))
+						.collect(Collectors.toSet());
+	}
 }

@@ -1,5 +1,6 @@
 package com.luannv.mf.models;
 
+import com.luannv.mf.dto.response.SkillResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,14 +23,19 @@ public class Project {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	String id;
 	String title;
+	@Column(columnDefinition = "LONGTEXT")
 	String description;
-	Long budgetMin;
-	Long budgetMax;
+	Integer budgetMin;
+	Integer budgetMax;
 	LocalDateTime deadline;
 	LocalDateTime createAt;
-	Boolean isClaimed;
+	@Column(columnDefinition = "TINYINT(1) DEFAULT 0")
+	Integer status = 0;
 	@ManyToMany
 	Set<Skill> skills;
-	@OneToOne
-	User user;
+	@ManyToOne
+	User client;
+	@ManyToOne
+	@Column(nullable = true)
+	User developer = null;
 }
