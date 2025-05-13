@@ -1,5 +1,6 @@
 package com.luannv.mf.mappers;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.luannv.mf.dto.request.UserCreationRequest;
 import com.luannv.mf.dto.response.RoleResponse;
 import com.luannv.mf.dto.response.UserResponse;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Component
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCreationMapper implements GenericMapper<User, UserCreationRequest, UserResponse> {
 	PasswordEncoder passwordEncoder;
 	RoleRepository roleRepository;

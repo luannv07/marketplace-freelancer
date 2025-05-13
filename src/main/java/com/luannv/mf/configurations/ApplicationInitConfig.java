@@ -39,7 +39,7 @@ public class ApplicationInitConfig {
 
 				if (skillRepository.existsByName(skillEnum.name()) ||
 								(optSkill.isPresent() && optSkill.get().getIsActive() == 0)	) continue;
-				Skill skill = Skill.builder().name(skillEnum.name()).build();
+				Skill skill = Skill.builder().name(skillEnum.name()).isActive(1).build();
 				skillRepository.save(skill);
 			}
 

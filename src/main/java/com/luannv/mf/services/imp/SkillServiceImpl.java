@@ -16,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,9 @@ public class SkillServiceImpl implements SkillService {
 		skillRepository.save(skillEntity);
 	}
 	public Set<Skill> resolveSkills(Set<String> skills) {
+		System.out.println(">>>>>>>> TEST");
+		if (skills == null || skills.isEmpty())
+			return new HashSet<>();
 		return skills.stream()
 						.map(s -> skillRepository.findByName(s)
 										.orElseThrow(() -> new SingleErrorException(ErrorCode.SKILL_NOTFOUND)))

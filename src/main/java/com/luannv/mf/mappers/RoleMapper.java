@@ -1,6 +1,8 @@
 package com.luannv.mf.mappers;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.luannv.mf.dto.request.RoleRequest;
+import com.luannv.mf.dto.response.PermissionResponse;
 import com.luannv.mf.dto.response.RoleResponse;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.SingleErrorException;
@@ -18,9 +20,10 @@ import java.util.stream.Collectors;
 @Component
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoleMapper implements GenericMapper<Role, RoleRequest, RoleResponse> {
 	PermissionRepository permissionRepository;
-
+	PermissionMapper permissionMapper;
 	@Override
 	public Role toEntity(RoleRequest permissionRequest) {
 		Set<Permission> set = permissionRequest.getPermissions()
@@ -39,10 +42,15 @@ public class RoleMapper implements GenericMapper<Role, RoleRequest, RoleResponse
 
 	@Override
 	public RoleResponse toResponse(Role permission) {
+		Set<PermissionResponse> permissions = permission
+						.getPermissions()
+						.stream()
+						.map(p-> permissionMapper.toResponse(p))
+						.collect(Collectors.toSet());
 		return RoleResponse.builder()
 						.name(permission.getName())
 						.description(permission.getDescription())
-						.permissions(permission.getPermissions())
+						.permissions(permissions)
 						.build();
 	}
 

@@ -34,8 +34,9 @@ public class Project {
 	@ManyToMany
 	Set<Skill> skills;
 	@ManyToOne
+	@JoinColumn(nullable = false, name = "client_id")
 	User client;
 	@ManyToOne
-	@Column(nullable = true)
+	@JoinColumn(name = "dev_id")
 	User developer = null;
 }

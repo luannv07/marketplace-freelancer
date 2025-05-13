@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface ProjectService {
@@ -15,6 +14,7 @@ public interface ProjectService {
 	List<ProjectResponse> findAllProject();
 	ProjectResponse getProjectById(String id);
 	ProjectResponse updateProjectInfo(String id, ProjectUpdateRequest projectUpdateRequest, BindingResult bindingResult);
-	Void deleteProject(String id);
+	void deleteProject(String id);
 	ProjectResponse uploadProject(ProjectRequest projectRequest, BindingResult bindingResult);
+	ProjectResponse claimProject(String id);
 }

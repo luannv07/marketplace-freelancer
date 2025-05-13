@@ -1,5 +1,6 @@
 package com.luannv.mf.mappers;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.luannv.mf.dto.request.UserUpdateRequest;
 import com.luannv.mf.dto.response.UserResponse;
 import com.luannv.mf.models.User;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserUpdateMapper implements GenericMapper<User, UserUpdateRequest, UserResponse> {
 	PasswordEncoder passwordEncoder;
 	RoleRepository roleRepository;

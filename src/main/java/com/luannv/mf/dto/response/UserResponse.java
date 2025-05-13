@@ -25,5 +25,6 @@ public class UserResponse {
 	Double rating;
 	Set<RoleResponse> roles;
 	String companyName;
-	Set<Skill> skills;
+	Set<SkillResponse> skills;
+	Set<ProjectResponse> projects;
 }

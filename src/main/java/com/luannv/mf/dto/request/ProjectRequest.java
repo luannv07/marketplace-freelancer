@@ -1,8 +1,10 @@
 package com.luannv.mf.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.luannv.mf.models.Skill;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,12 +21,13 @@ public class ProjectRequest {
 	String title;
 	@NotBlank(message = "FIELD_NOTBLANK")
 	String description;
-	@NotBlank(message = "FIELD_NOTBLANK")
+	@NotNull(message = "FIELD_NOTBLANK")
 	Integer budgetMin;
-	@NotBlank(message = "FIELD_NOTBLANK")
+	@NotNull(message = "FIELD_NOTBLANK")
 	Integer budgetMax;
-	@NotBlank(message = "FIELD_NOTBLANK")
+	@NotNull(message = "FIELD_NOTBLANK")
 	LocalDateTime deadline;
-	@NotBlank(message = "FIELD_NOTBLANK")
+	@NotNull(message = "FIELD_NOTBLANK")
 	Set<String> skills;
+	Integer status = 0;
 }
