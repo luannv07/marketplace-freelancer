@@ -45,6 +45,7 @@ public class JwtUtils {
 						.jwtID(UUID.randomUUID().toString())
 						.subject(user.getId())
 						.expirationTime(new Date(Instant.now().plus(2, ChronoUnit.HOURS).toEpochMilli()))
+						.issueTime(new Date())
 						.claim("scope", convertRole(user.getRoles()))
 						.claim("username", user.getUsername())
 						.build();

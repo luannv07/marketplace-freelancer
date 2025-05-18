@@ -8,6 +8,9 @@ import com.luannv.mf.dto.response.ApiResponse;
 import com.luannv.mf.dto.response.UserResponse;
 import com.luannv.mf.services.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +25,16 @@ import java.text.ParseException;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Authentication Controller", description = "Manage registration, login, logout, and token validation")
 public class AuthenticationController {
 	AuthenticationService authenticationService;
 
 	@PostMapping("/register")
-	public ResponseEntity<ApiResponse> register(@Valid @RequestBody UserCreationRequest userCreationRequest,
-																							BindingResult bindingResult) {
+	@Operation(summary = "Register a new user", description = "Create a new user account with the given information")
+	public ResponseEntity<ApiResponse> register(
+					@Parameter(description = "User registration data", required = true)
+					@Valid @RequestBody UserCreationRequest userCreationRequest,
+					BindingResult bindingResult) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, UserResponse>builder()
 						.timestamp(System.currentTimeMillis())
 						.result(authenticationService.addUser(userCreationRequest, bindingResult))
@@ -35,7 +42,10 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
+	@Operation(summary = "User login", description = "Authenticate user and return JWT token if successful")
+	public ResponseEntity<ApiResponse> login(
+					@Parameter(description = "User login credentials", required = true)
+					@RequestBody UserLoginRequest userLoginRequest) {
 		return ResponseEntity.ok().body(ApiResponse.<Void, String>builder()
 						.timestamp(System.currentTimeMillis())
 						.result(authenticationService.userLogin(userLoginRequest))
@@ -43,7 +53,10 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/check-valid-token")
-	public ResponseEntity<ApiResponse> checkValidToken(@RequestBody TokenRequest tokenRequest) throws ParseException, JOSEException {
+	@Operation(summary = "Check token validity", description = "Verify whether a given JWT token is valid")
+	public ResponseEntity<ApiResponse> checkValidToken(
+					@Parameter(description = "JWT token data to validate", required = true)
+					@RequestBody TokenRequest tokenRequest) throws ParseException, JOSEException {
 		Boolean isValid = authenticationService.authCheckValidToken(tokenRequest);
 		int statusCode = 400;
 		if (isValid)
@@ -55,7 +68,10 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/logout")
-	public ResponseEntity<ApiResponse> logoutUser(@RequestBody LogoutRequest logoutRequest) {
+	@Operation(summary = "User logout", description = "Invalidate the token and log out the user")
+	public ResponseEntity<ApiResponse> logoutUser(
+					@Parameter(description = "Token information for logout", required = true)
+					@RequestBody LogoutRequest logoutRequest) {
 		String usernameLogout = authenticationService.logout(logoutRequest);
 		return ResponseEntity.ok().body(ApiResponse.<Void, String>builder()
 						.timestamp(System.currentTimeMillis())

@@ -25,7 +25,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Arrays;
@@ -51,9 +50,10 @@ public class SecurityConfig {
 										"/swagger-resources/**",
 										"/configuration/**",
 										"/webjars/**",
-										"/api/users/test"
+										"/api/users/test",
+										"/api/auth/**",
+										"/"
 						).permitAll()
-						.requestMatchers("/api/auth/**").permitAll()
 						.requestMatchers("/api/permissions/**", "/api/roles/**").hasRole(RoleEnum.ADMIN.name())
 						.anyRequest().authenticated());
 		http.csrf(c -> c.disable());
@@ -106,17 +106,27 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 	private SecurityScheme securityScheme() {
 		return new SecurityScheme().type(SecurityScheme.Type.HTTP)
 						.bearerFormat("JWT")
 						.scheme("bearer");
 	}
+
 	@Bean
 	public OpenAPI openAPI() {
 		return new OpenAPI()
-						.addSecurityItem(new SecurityRequirement()
-						.addList("Bearer Authentication"))
-						.components(new Components().addSecuritySchemes("Bearer Authentication", securityScheme()))
-						.info(new Info());
+						.info(new Info()
+										.title("Marketplace Freelancer API")
+										.version("1.0")
+										.description("API with JWT Bearer Authentication - LuanNV"))
+						.addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+						.components(new Components()
+										.addSecuritySchemes("Bearer Authentication", new SecurityScheme()
+														.name("Authorization")
+														.type(SecurityScheme.Type.HTTP)
+														.scheme("bearer")
+														.bearerFormat("JWT")));
 	}
+
 }
