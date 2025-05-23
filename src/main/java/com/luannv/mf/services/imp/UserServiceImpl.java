@@ -1,7 +1,6 @@
 package com.luannv.mf.services.imp;
 
 import com.luannv.mf.dto.request.*;
-import com.luannv.mf.dto.response.SkillResponse;
 import com.luannv.mf.dto.response.UserResponse;
 import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
@@ -24,10 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,7 +44,12 @@ public class UserServiceImpl implements UserService {
 	SkillMapper skillMapper;
 
 	public List<UserResponse> getAll() {
-		return userRepository.findAll().stream().map(user -> userMapper.toResponse(user)).toList();
+		try {
+			return userRepository.findAll().stream().map(user -> userMapper.toResponse(user)).toList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<>();
 	}
 
 	public UserResponse getByUsername(String username) {
@@ -130,9 +131,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Void deleteAll() {
-		userRepository.deleteAll();
+		userRepository.findAll().stream()
+						.filter(user -> !user.getUsername().equalsIgnoreCase(RoleEnum.ADMIN.name()))
+						.forEach(userRepository::delete);
 		return null;
 	}
+
 
 	@Override
 	public UserResponse addFieldDetailsClient(String username, ClientFieldsRequest clientFieldsRequest) {
@@ -144,8 +148,10 @@ public class UserServiceImpl implements UserService {
 		user.setClientProfile(ClientProfile.builder()
 						.companyName(clientFieldsRequest.getCompanyName())
 						.userClientProfile(user)
+						.postedProjects(new HashSet<>())
 						.build());
 		user = userRepository.save(user);
+		System.out.println(user.getClientProfile().getCompanyName());
 		return userMapper.toResponse(user);
 	}
 
@@ -163,13 +169,14 @@ public class UserServiceImpl implements UserService {
 							if (skillRepository.existsByName(s))
 								return skillRepository.findByName(s).get();
 							return skillService.saveSkill(SkillRequest.builder()
-															.name(s)
-															.build());
+											.name(s)
+											.build());
 						})
 						.collect(Collectors.toSet());
 		user.setFreelancerProfile(FreelancerProfile.builder()
 						.skills(skills)
 						.userFreelancerProfile(user)
+						.receivedProject(new HashSet<>())
 						.build());
 		user = userRepository.save(user);
 		return userMapper.toResponse(user);

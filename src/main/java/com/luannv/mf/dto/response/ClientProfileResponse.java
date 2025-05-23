@@ -4,25 +4,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProjectResponse {
-	String title;
-	String description;
-	Integer budgetMin;
-	Integer budgetMax;
-	LocalDateTime deadline;
-	LocalDateTime createAt;
-	Integer status;
-	Set<SkillResponse> skills;
-	String userId;
-	String developerId;
+public class ClientProfileResponse {
+	String companyName;
+	Set<ProjectResponse> postedProjects;
 }

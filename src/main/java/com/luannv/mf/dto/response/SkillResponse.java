@@ -1,10 +1,8 @@
 package com.luannv.mf.dto.response;
 
-import com.luannv.mf.models.Permission;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -12,6 +10,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SkillResponse {
 	String name;
 	Integer isActive;

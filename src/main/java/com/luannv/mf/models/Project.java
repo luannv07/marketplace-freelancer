@@ -1,11 +1,9 @@
 package com.luannv.mf.models;
 
-import com.luannv.mf.dto.response.SkillResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -34,9 +32,9 @@ public class Project {
 	@ManyToMany
 	Set<Skill> skills;
 	@ManyToOne
-	@JoinColumn(nullable = false, name = "client_id")
-	User client;
+	@JoinColumn(nullable = false, name = "client_profile")
+	ClientProfile client;
 	@ManyToOne
-	@JoinColumn(name = "dev_id")
-	User developer = null;
+	@JoinColumn(name = "dev_profile")
+	FreelancerProfile developer = null;
 }

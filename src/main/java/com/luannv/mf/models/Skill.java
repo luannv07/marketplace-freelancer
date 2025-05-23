@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "skills")
+@ToString
 public class Skill {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

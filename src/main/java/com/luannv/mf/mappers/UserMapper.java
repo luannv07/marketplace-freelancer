@@ -2,12 +2,13 @@ package com.luannv.mf.mappers;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.luannv.mf.dto.request.UserCreationRequest;
-import com.luannv.mf.dto.response.RoleResponse;
 import com.luannv.mf.dto.response.UserResponse;
+import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.SingleErrorException;
+import com.luannv.mf.models.ClientProfile;
+import com.luannv.mf.models.FreelancerProfile;
 import com.luannv.mf.models.Role;
-import com.luannv.mf.models.Skill;
 import com.luannv.mf.models.User;
 import com.luannv.mf.repositories.RoleRepository;
 import lombok.AccessLevel;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -34,6 +34,9 @@ public class UserMapper implements GenericMapper<User, UserCreationRequest, User
 	public User toEntity(UserCreationRequest userCreationRequest) {
 		Role role = roleRepository.findByName(userCreationRequest.getUserType())
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.ROLE_NOTFOUND));
+		boolean isFreelancer = userCreationRequest.getUserType().equalsIgnoreCase(RoleEnum.FREELANCER.name());
+		ClientProfile clientProfile = isFreelancer ? null : ClientProfile.builder().build();
+		FreelancerProfile freelancerProfile = isFreelancer ? FreelancerProfile.builder().build() : null;
 		return User.builder()
 						.username(userCreationRequest.getUsername())
 						.email(userCreationRequest.getEmail())
@@ -43,6 +46,8 @@ public class UserMapper implements GenericMapper<User, UserCreationRequest, User
 						.createAt(LocalDateTime.now())
 						.updateAt(LocalDateTime.now())
 						.roles(Set.of(role))
+						.clientProfile(clientProfile)
+						.freelancerProfile(freelancerProfile)
 						.build();
 	}
 

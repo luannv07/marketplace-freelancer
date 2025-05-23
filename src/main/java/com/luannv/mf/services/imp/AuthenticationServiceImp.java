@@ -43,24 +43,24 @@ public class AuthenticationServiceImp implements AuthenticationService  {
 	InvalidatedTokenService invalidatedTokenService;
 
 	public UserResponse addUser(UserCreationRequest userCreationRequest, BindingResult bindingResult) {
-		Map<String, String> errors = new HashMap<>();
-		if (bindingResult.hasErrors())
-			bindingResult
-							.getFieldErrors()
-							.forEach(fieldError ->
-											errors.put(fieldError.getField(), ErrorCode.valueOf(fieldError.getDefaultMessage())
-															.getMessages()));
-		if (!userRepository.findByUsername(userCreationRequest.getUsername()).isEmpty())
-			errors.put("username", ErrorCode.USER_EXISTED.getMessages());
-		if (!userRepository.findByEmail(userCreationRequest.getEmail()).isEmpty())
-			errors.put("email", ErrorCode.EMAIL_EXISTED.getMessages());
-		if (userCreationRequest.getUserType() == null || !ItemUtils.isItemOfEnum(userCreationRequest.getUserType(), RoleEnum.class))
-			errors.put("userType", ErrorCode.USERTYPE_NOTVALID.getMessages());
-		if (!errors.isEmpty())
-			throw new MultipleErrorsException(errors);
-		User user = userCreationMapper.toEntity(userCreationRequest);
-		userRepository.save(user);
-		return userCreationMapper.toResponse(user);
+			Map<String, String> errors = new HashMap<>();
+			if (bindingResult.hasErrors())
+				bindingResult
+								.getFieldErrors()
+								.forEach(fieldError ->
+												errors.put(fieldError.getField(), ErrorCode.valueOf(fieldError.getDefaultMessage())
+																.getMessages()));
+			if (!userRepository.findByUsername(userCreationRequest.getUsername()).isEmpty())
+				errors.put("username", ErrorCode.USER_EXISTED.getMessages());
+			if (!userRepository.findByEmail(userCreationRequest.getEmail()).isEmpty())
+				errors.put("email", ErrorCode.EMAIL_EXISTED.getMessages());
+			if (userCreationRequest.getUserType() == null || !ItemUtils.isItemOfEnum(userCreationRequest.getUserType(), RoleEnum.class))
+				errors.put("userType", ErrorCode.USERTYPE_NOTVALID.getMessages());
+			if (!errors.isEmpty())
+				throw new MultipleErrorsException(errors);
+			User user = userCreationMapper.toEntity(userCreationRequest);
+			userRepository.save(user);
+			return userCreationMapper.toResponse(user);
 	}
 
 	public String userLogin(UserLoginRequest userLoginRequest) {

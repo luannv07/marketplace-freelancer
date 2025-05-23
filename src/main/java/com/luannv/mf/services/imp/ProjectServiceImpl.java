@@ -96,8 +96,8 @@ public class ProjectServiceImpl implements ProjectService {
 		Project project = projectRepository
 						.findById(id)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.PROJECT_NOTFOUND));
-		User dev = userRepository.findByUsername(currentUser).get();
-		project.setDeveloper(dev);
+		User userToFind = userRepository.findByUsername(currentUser).get();
+		project.setDeveloper(userToFind.getFreelancerProfile());
 		return projectMapper.toResponse(project);
 	}
 }

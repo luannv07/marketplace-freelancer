@@ -1,6 +1,5 @@
 package com.luannv.mf.configurations;
 
-import com.luannv.mf.dto.request.RoleRequest;
 import com.luannv.mf.enums.PermissionEnum;
 import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.enums.SkillEnum;
@@ -20,7 +19,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -38,7 +39,7 @@ public class ApplicationInitConfig {
 				Optional<Skill> optSkill = skillRepository.findByName(skillEnum.name());
 
 				if (skillRepository.existsByName(skillEnum.name()) ||
-								(optSkill.isPresent() && optSkill.get().getIsActive() == 0)	) continue;
+								(optSkill.isPresent() && optSkill.get().getIsActive() == 0)) continue;
 				Skill skill = Skill.builder().name(skillEnum.name()).isActive(1).build();
 				skillRepository.save(skill);
 			}
@@ -52,6 +53,28 @@ public class ApplicationInitConfig {
 								.build();
 				permissions.add(permission);
 				permissionRepository.save(permission);
+			}
+			Set<Permission> freelancerRoles = permissions
+							.stream()
+							.filter(permission -> !permission.getName().startsWith("ADMIN_") && !permission.getName().startsWith("PROJECT_"))
+							.collect(Collectors.toSet());
+			if (!roleRepository.existsByName(RoleEnum.FREELANCER.name())) {
+				roleRepository.save(Role.builder()
+								.name(RoleEnum.FREELANCER.name())
+								.permissions(freelancerRoles)
+								.description("You are so cool dev!")
+								.build());
+			}
+			Set<Permission> clientRoles = permissions
+							.stream()
+							.filter(permission -> !permission.getName().startsWith("ADMIN_") && !permission.getName().startsWith("FREELANCER_"))
+							.collect(Collectors.toSet());
+			if (!roleRepository.existsByName(RoleEnum.CLIENT.name())) {
+				roleRepository.save(Role.builder()
+								.name(RoleEnum.CLIENT.name())
+								.permissions(clientRoles)
+								.description("Client role haha !")
+								.build());
 			}
 			if (!roleRepository.existsByName(RoleEnum.ADMIN.name()))
 				roleRepository.save(Role.builder()

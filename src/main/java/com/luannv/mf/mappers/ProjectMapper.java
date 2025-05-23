@@ -7,11 +7,9 @@ import com.luannv.mf.dto.response.ProjectResponse;
 import com.luannv.mf.dto.response.SkillResponse;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.SingleErrorException;
-import com.luannv.mf.models.FreelancerProfile;
 import com.luannv.mf.models.Project;
 import com.luannv.mf.models.Skill;
 import com.luannv.mf.models.User;
-import com.luannv.mf.repositories.SkillRepository;
 import com.luannv.mf.repositories.UserRepository;
 import com.luannv.mf.services.SkillService;
 import lombok.AccessLevel;
@@ -20,8 +18,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,7 +37,7 @@ public class ProjectMapper implements GenericMapper<Project, ProjectRequest, Pro
 		if (username == null)
 			throw new SingleErrorException(ErrorCode.UNAUTHENTICATED);
 		Set<Skill> skills = skillService.resolveSkills(projectRequest.getSkills());
-		User client = userRepository.findByUsername(username).get();
+		User userToFind = userRepository.findByUsername(username).get();
 		return Project.builder()
 						.deadline(projectRequest.getDeadline())
 						.createAt(LocalDateTime.now())
@@ -50,7 +46,7 @@ public class ProjectMapper implements GenericMapper<Project, ProjectRequest, Pro
 						.budgetMax(projectRequest.getBudgetMax())
 						.budgetMin(projectRequest.getBudgetMin())
 						.skills(skills)
-						.client(client)
+						.client(userToFind.getClientProfile())
 						.build();
 	}
 
@@ -72,7 +68,7 @@ public class ProjectMapper implements GenericMapper<Project, ProjectRequest, Pro
 						.description(project.getDescription())
 						.deadline(project.getDeadline())
 						.skills(skillsResponse)
-						.userId(project.getClient().getId())
+						.userId(project.getClient().getUserClientProfile().getId())
 						.developerId(freelancerProfile.toString())
 						.build();
 	}
