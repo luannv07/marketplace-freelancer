@@ -32,9 +32,11 @@ public class ProjectController {
 	@GetMapping
 	@Operation(summary = "Get all projects", description = "Retrieve all projects from the system")
 	public ResponseEntity<ApiResponse> getAllProject() {
-		return ResponseEntity.ok().body(ApiResponse.<Void, List<ProjectResponse>>builder()
+		List<ProjectResponse> projects = projectService.findAllProject();
+		return ResponseEntity.ok().body(ApiResponse.<String, List<ProjectResponse>>builder()
 						.timestamp(System.currentTimeMillis())
-						.result(projectService.findAllProject())
+						.result(projects)
+						.message("Have " + projects.size() + " projects")
 						.build());
 	}
 

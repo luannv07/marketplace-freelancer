@@ -1,9 +1,9 @@
 package com.luannv.mf.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -15,5 +15,6 @@ import java.util.Set;
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClientProfileResponse {
 	String companyName;
-	Set<ProjectResponse> postedProjects;
+	Set<ProjectResponse> postedProjects = new HashSet<>();
+	Set<ProposalResponse> receivedProposals = new HashSet<>();
 }

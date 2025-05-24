@@ -14,29 +14,29 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "projects")
-public class Project {
+@Table(name = "proposals")
+
+public class Proposal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	String id;
-	String title;
 	@Column(columnDefinition = "LONGTEXT")
-	String description;
-	Integer budgetMin;
-	Integer budgetMax;
-	LocalDateTime deadline;
-	LocalDateTime createAt;
+	String messages;
+	Integer price;
+	LocalDateTime createAt = LocalDateTime.now();
 	@Column(columnDefinition = "TINYINT(1) DEFAULT 0")
 	Integer status = 0;
-	@ManyToMany
-	Set<Skill> skills;
-	@ManyToOne
-	@JoinColumn(nullable = false, name = "client_profile")
-	ClientProfile client;
-	@ManyToOne
-	@JoinColumn(name = "dev_profile")
-	FreelancerProfile developer = null;
 
-	@OneToMany(mappedBy = "projectProposal", cascade = CascadeType.ALL)
-	Set<Proposal> proposals;
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	Project projectProposal;
+
+	@ManyToOne
+	@JoinColumn(name = "client_id")
+	ClientProfile clientProposal;
+
+	@ManyToOne
+	@JoinColumn(name = "freelancer_id")
+	FreelancerProfile freelancerProposal;
+
 }

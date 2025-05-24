@@ -16,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
-
+@ToString
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

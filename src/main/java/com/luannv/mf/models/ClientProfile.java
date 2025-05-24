@@ -17,15 +17,17 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "client_profile")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
 public class ClientProfile {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer id;
 	String companyName = "";
 	@Setter(AccessLevel.NONE)
-	@OneToOne(cascade = CascadeType.ALL)
+
+	@OneToOne(cascade = CascadeType.ALL) // 1 client ung 1 user
 	User userClientProfile;
-	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL) // cac project da dang
 	Set<Project> postedProjects = new HashSet<>();
+	@OneToMany(mappedBy = "clientProposal", cascade = CascadeType.ALL) // cac proposal da nhan
+	Set<Proposal> receivedProposal = new HashSet<>();
 }

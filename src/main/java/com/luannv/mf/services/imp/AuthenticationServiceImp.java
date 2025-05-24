@@ -52,6 +52,7 @@ public class AuthenticationServiceImp implements AuthenticationService  {
 																.getMessages()));
 			if (!userRepository.findByUsername(userCreationRequest.getUsername()).isEmpty())
 				errors.put("username", ErrorCode.USER_EXISTED.getMessages());
+			userCreationRequest.setUsername(userCreationRequest.getUsername().toLowerCase());
 			if (!userRepository.findByEmail(userCreationRequest.getEmail()).isEmpty())
 				errors.put("email", ErrorCode.EMAIL_EXISTED.getMessages());
 			if (userCreationRequest.getUserType() == null || !ItemUtils.isItemOfEnum(userCreationRequest.getUserType(), RoleEnum.class))

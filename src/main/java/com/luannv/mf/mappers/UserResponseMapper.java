@@ -35,8 +35,6 @@ public class UserResponseMapper {
 						.stream()
 						.map(role -> roleMapper.toResponse(role).getName())
 						.collect(Collectors.toSet());
-		ClientProfile clientProfileOutput = user.getClientProfile();
-		FreelancerProfile freelancerProfileOutput = user.getFreelancerProfile();
 
 		UserResponse.UserResponseBuilder response = UserResponse.builder()
 						.roles(set)
@@ -46,6 +44,8 @@ public class UserResponseMapper {
 						.createAt(user.getCreateAt())
 						.updateAt(user.getUpdateAt())
 						.email(user.getEmail());
+		ClientProfile clientProfileOutput = user.getClientProfile();
+		FreelancerProfile freelancerProfileOutput = user.getFreelancerProfile();
 
 		if (clientProfileOutput != null) {
 			response.clientProfile(clientProfileMapper.toResponse(clientProfileOutput));

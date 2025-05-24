@@ -102,7 +102,12 @@ public class ProjectServiceImpl implements ProjectService {
 						.findById(id)
 						.orElseThrow(() -> new SingleErrorException(ErrorCode.PROJECT_NOTFOUND));
 		User userToFind = userRepository.findByUsername(currentUser).get();
+		if (userToFind.getRoles().contains(roleRepository.findByName(RoleEnum.CLIENT.name()).get()))
+			throw new SingleErrorException(ErrorCode.FORBIDDEN);
+		System.out.println(userToFind);
 		project.setDeveloper(userToFind.getFreelancerProfile());
+		project = projectRepository.save(project);
+		System.out.println(project.getDeveloper());
 		return projectMapper.toResponse(project);
 	}
 }

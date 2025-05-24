@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ConfirmPasswordConstraint(first = "password", second = "confirmPassword")
 public class UserCreationRequest {
-	@Pattern(message = "USERNAME_NOTVALID", regexp = "^[a-z][a-z0-9]{4,14}$")
+	@Pattern(message = "USERNAME_NOTVALID", regexp = "^[a-z0-9]{3,}$")
 	@NotBlank(message = "FIELD_NOTBLANK")
 	String username;
 	@Pattern(message = "PASSWORD_NOTVALID", regexp = "^.{3,}$")

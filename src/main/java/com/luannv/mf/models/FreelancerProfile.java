@@ -30,4 +30,7 @@ public class FreelancerProfile {
 	User userFreelancerProfile;
 	@OneToMany(mappedBy = "developer", cascade = CascadeType.ALL)
 	Set<Project> receivedProject = new HashSet<>();
+	@OneToMany(mappedBy = "freelancerProposal", cascade = CascadeType.ALL)
+	Set<Proposal> sentProposal = new HashSet<>();
+
 }

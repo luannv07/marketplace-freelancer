@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -14,6 +15,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FreelancerProfileResponse {
-	Set<SkillResponse> freelancerSkills;
-	Set<ProjectResponse> receivedProjects;
+	Set<SkillResponse> freelancerSkills = new HashSet<>();
+	Set<ProjectResponse> receivedProjects = new HashSet<>();
+	Set<ProposalResponse> sentProposals = new HashSet<>();
 }
