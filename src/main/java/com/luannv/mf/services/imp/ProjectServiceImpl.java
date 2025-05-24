@@ -3,6 +3,7 @@ package com.luannv.mf.services.imp;
 import com.luannv.mf.dto.request.ProjectRequest;
 import com.luannv.mf.dto.request.ProjectUpdateRequest;
 import com.luannv.mf.dto.response.ProjectResponse;
+import com.luannv.mf.enums.RoleEnum;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.MultipleErrorsException;
 import com.luannv.mf.exceptions.SingleErrorException;
@@ -10,14 +11,18 @@ import com.luannv.mf.mappers.ProjectMapper;
 import com.luannv.mf.models.Project;
 import com.luannv.mf.models.User;
 import com.luannv.mf.repositories.ProjectRepository;
+import com.luannv.mf.repositories.RoleRepository;
 import com.luannv.mf.repositories.UserRepository;
 import com.luannv.mf.services.ProjectService;
+import com.luannv.mf.utils.SecurityUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
 	ProjectRepository projectRepository;
 	ProjectMapper projectMapper;
 	UserRepository userRepository;
+	RoleRepository roleRepository;
 
 	@Override
 	public ProjectResponse getProjectById(String id) {
@@ -42,8 +48,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public ProjectResponse updateProjectInfo(String id, ProjectUpdateRequest projectUpdateRequest, BindingResult bindingResult) {
-		Map<String, String> errs = baseBindingResult(bindingResult);
+	public ProjectResponse updateProjectInfo(String id, ProjectUpdateRequest projectUpdateRequest) {
+		Map<String, String> errs = new HashMap<>();
 		if (projectUpdateRequest.getBudgetMax() < projectUpdateRequest.getBudgetMin())
 			errs.put("budgetMin", ErrorCode.BUDGET_MIN_NOTVALID.getMessages());
 		if (!errs.isEmpty())
@@ -63,20 +69,19 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public ProjectResponse uploadProject(ProjectRequest projectRequest, BindingResult bindingResult) {
-		try {
-			Map<String, String> errs = baseBindingResult(bindingResult);
-			if (projectRequest.getBudgetMax() < projectRequest.getBudgetMin())
-				errs.put("budgetMin", ErrorCode.BUDGET_MIN_NOTVALID.getMessages());
-			if (!errs.isEmpty())
-				throw new MultipleErrorsException(errs);
-			Project p = projectMapper.toEntity(projectRequest);
-			p = projectRepository.save(p);
-			return projectMapper.toResponse(p);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public ProjectResponse uploadProject(ProjectRequest projectRequest, BindingResult bindingResult) throws ParseException {
+		String currentUsername = SecurityUtils.getCurrentUsername();
+		User currentUser = userRepository.findByUsername(currentUsername).get();
+		if (currentUser.getRoles().contains(roleRepository.findByName(RoleEnum.FREELANCER.name()).get()))
+			throw new SingleErrorException(ErrorCode.FORBIDDEN);
+		Map<String, String> errs = baseBindingResult(bindingResult);
+		if (projectRequest.getBudgetMax() < projectRequest.getBudgetMin())
+			errs.put("budgetMin", ErrorCode.BUDGET_MIN_NOTVALID.getMessages());
+		if (!errs.isEmpty())
+			throw new MultipleErrorsException(errs);
+		Project p = projectMapper.toEntity(projectRequest);
+		p = projectRepository.save(p);
+		return projectMapper.toResponse(p);
 	}
 
 	@Override

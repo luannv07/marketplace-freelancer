@@ -90,7 +90,7 @@ public class ApplicationInitConfig {
 			set.add(role);
 			User user = User.builder()
 							.username("admin")
-							.password(passwordEncoder.encode("admin"))
+							.password(passwordEncoder.encode("123"))
 							.roles(set)
 							.build();
 			userRepository.save(user);

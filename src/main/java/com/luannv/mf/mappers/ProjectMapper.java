@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.luannv.mf.dto.request.ProjectRequest;
 import com.luannv.mf.dto.request.ProjectUpdateRequest;
 import com.luannv.mf.dto.response.ProjectResponse;
-import com.luannv.mf.dto.response.SkillResponse;
 import com.luannv.mf.exceptions.ErrorCode;
 import com.luannv.mf.exceptions.SingleErrorException;
 import com.luannv.mf.models.Project;
@@ -31,6 +30,7 @@ public class ProjectMapper implements GenericMapper<Project, ProjectRequest, Pro
 	SkillService skillService;
 	SkillMapper skillMapper;
 	UserRepository userRepository;
+
 	@Override
 	public Project toEntity(ProjectRequest projectRequest) {
 		String username = getCurrentUsername();
@@ -52,14 +52,19 @@ public class ProjectMapper implements GenericMapper<Project, ProjectRequest, Pro
 
 	@Override
 	public ProjectResponse toResponse(Project project) {
-		Set<SkillResponse> skillsResponse = project.getSkills()
+//		Set<SkillResponse> skillsResponse = project.getSkills()
+//						.stream()
+//						.map(skill -> skillMapper.toResponse(skill))
+//						.collect(Collectors.toSet());
+		Set<String> skillsResponse = project.getSkills()
 						.stream()
-						.map(skill -> skillMapper.toResponse(skill))
+						.map(skill -> skillMapper.toResponse(skill).getName())
 						.collect(Collectors.toSet());
 		StringBuilder freelancerProfile = new StringBuilder("");
 		if (project.getStatus() != null)
-			 freelancerProfile.append(project.getDeveloper().getId());
+			freelancerProfile.append(project.getDeveloper().getName());
 		return ProjectResponse.builder()
+						.id(project.getId())
 						.status(project.getStatus() == null ? 0 : project.getStatus())
 						.budgetMax(project.getBudgetMax())
 						.budgetMin(project.getBudgetMin())
@@ -68,18 +73,30 @@ public class ProjectMapper implements GenericMapper<Project, ProjectRequest, Pro
 						.description(project.getDescription())
 						.deadline(project.getDeadline())
 						.skills(skillsResponse)
-						.userId(project.getClient().getUserClientProfile().getId())
+						.userId(project.getClient().getUserClientProfile().getUsername())
 						.developerId(freelancerProfile.toString())
 						.build();
 	}
 
 	public void update(ProjectUpdateRequest request, Project project) {
 		Set<Skill> skills = skillService.resolveSkills(request.getSkills());
-		project.setTitle(request.getTitle());
-		project.setDescription(request.getDescription());
-		project.setBudgetMin(request.getBudgetMin());
-		project.setBudgetMax(request.getBudgetMax());
-		project.setDeadline(request.getDeadline());
-		project.setSkills(skills);
+		if (request.getTitle() != null && !request.getTitle().isEmpty()) {
+			project.setTitle(request.getTitle());
+		}
+		if (request.getDescription() != null && !request.getDescription().isEmpty()) {
+			project.setDescription(request.getDescription());
+		}
+		if (request.getBudgetMin() != null) {
+			project.setBudgetMin(request.getBudgetMin());
+		}
+		if (request.getBudgetMax() != null) {
+			project.setBudgetMax(request.getBudgetMax());
+		}
+		if (request.getDeadline() != null) {
+			project.setDeadline(request.getDeadline());
+		}
+		if (request.getSkills() != null && !request.getSkills().isEmpty()) {
+			project.setSkills(skills);
+		}
 	}
 }

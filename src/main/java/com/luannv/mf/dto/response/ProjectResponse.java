@@ -15,6 +15,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProjectResponse {
+	String id;
 	String title;
 	String description;
 	Integer budgetMin;
@@ -22,7 +23,8 @@ public class ProjectResponse {
 	LocalDateTime deadline;
 	LocalDateTime createAt;
 	Integer status;
-	Set<SkillResponse> skills;
+//	Set<SkillResponse> skills;
+	Set<String> skills;
 	String userId;
 	String developerId;
 }

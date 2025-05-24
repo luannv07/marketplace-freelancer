@@ -7,8 +7,8 @@ import com.luannv.mf.dto.response.ProjectResponse;
 import com.luannv.mf.services.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -42,7 +43,7 @@ public class ProjectController {
 	public ResponseEntity<ApiResponse> addAnProject(
 					@Parameter(description = "New project data", required = true)
 					@Valid @RequestBody ProjectRequest projectRequest,
-					BindingResult bindingResult) {
+					BindingResult bindingResult) throws ParseException {
 		return ResponseEntity.ok().body(ApiResponse.<Void, ProjectResponse>builder()
 						.timestamp(System.currentTimeMillis())
 						.result(projectService.uploadProject(projectRequest, bindingResult))
@@ -55,11 +56,11 @@ public class ProjectController {
 					@Parameter(description = "ID of the project to update", required = true)
 					@PathVariable String id,
 					@Parameter(description = "Updated project data", required = true)
-					@Valid @RequestBody ProjectUpdateRequest projectUpdateRequest,
-					BindingResult bindingResult) {
+					@RequestBody ProjectUpdateRequest projectUpdateRequest) {
+		System.out.println("Chay vao day chua controller");
 		return ResponseEntity.ok().body(ApiResponse.<Void, ProjectResponse>builder()
 						.timestamp(System.currentTimeMillis())
-						.result(projectService.updateProjectInfo(id, projectUpdateRequest, bindingResult))
+						.result(projectService.updateProjectInfo(id, projectUpdateRequest))
 						.build());
 	}
 

@@ -21,7 +21,8 @@ public class UserResponse {
 	LocalDateTime createAt;
 	LocalDateTime updateAt;
 	Double rating;
-	Set<RoleResponse> roles;
+//	Set<RoleResponse> roles;
+	Set<String> roles;
 	ClientProfileResponse clientProfile;
 	FreelancerProfileResponse freelancerProfile;
 	Set<ProjectResponse> projects;
